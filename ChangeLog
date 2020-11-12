@@ -1,11 +1,66 @@
+2020-11-12  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Release 0.0.2
+
+2020-11-11  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/include/tidyCpp: No include include deprecated shield.h (as
+	protect.h also defines a compatibility typedef)
+
+	* inst/snippets/convolveExample.cpp: Use explicit R::Protect ownership
+	* inst/snippets/dimnamesExample.cpp: Ditto
+	* inst/snippets/protectExamples.cpp: Ditto
+	* inst/snippets/shieldExamples.cpp: Ditto
+
+	* vignettes/motivation.Rmd: Use explicit R::Protect ownership, add
+	new section discussion this issue
+	* inst/snippets/protectExamples.cpp: Added correct/incorrect protect
+	use example based on convolution example
+
+2020-11-09  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/NEWS.Rd: Added
+
+	* DESCRIPTION: Switch to Author and Maintainer, remove Authors@R
+
+2020-11-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version and date
+
+	* inst/include/tidy/protect.h: New and simpler protection classing,
+	replacing Shield as with a typedef
+	* inst/include/tidy/shield.h: Now just a comment reference to Protect
+	* inst/include/tidyCpp: Added include
+
+	* inst/snippets/dimnamesExample.cpp: Updated example to use Protect
+	* inst/snippets/convolveExample.cpp: Ditto
+	* inst/snippets/protectExamples.cpp: Added
+
+	* vignettes/motivation.Rmd: Updated vignette to use Protect
+
+	* inst/include/tidy/math.h: Cleaned up header, untabified, aligned
+
+	* README.md: Corrected badge link
+
+2020-10-15  Dirk Eddelbuettel  <edd@debian.org>
+
+	* DESCRIPTION (Version, Date): Roll minor version and date
+
+	* inst/include/tidy/internals.h: Additional defines
+
+	* vignettes/motivation.Rmd: Added uchardet example
+
+2020-10-14  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Expanded README.md with example from 'dang'
+
+2020-10-10  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Added
+
 2020-09-27  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION (Version, Date): Release 0.0.1
-
-2020-09-26  Dirk Eddelbuettel  <edd@debian.org>
-
-	* vignettes/tidycpp-motivation.Rnw: New pdf wrapper vignette
-	* vignettes/rmd/motivation.Rmd: Pdf version of vignette
 
 2020-09-25  Dirk Eddelbuettel  <edd@debian.org>
 

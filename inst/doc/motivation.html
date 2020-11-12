@@ -309,20 +309,43 @@ padding: 0 3rem;
 }
 }
 </style>
-  <script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
+  <style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+</style>
+  <script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
 document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
   }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '') {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
 });
 </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous" data-external="1">
@@ -345,13 +368,13 @@ document.addEventListener('DOMContentLoaded', function() {
 <header id="title-block-header">
 <h1 class="title">tidyCpp Motivation</h1>
 <p class="author">Dirk Eddelbuettel</p>
-<p class="date">Initial (draft) version dated October 2020</p>
+<p class="date">November 2020</p>
 </header>
 <article>
 <section id="introducing-tidycpp" class="level2">
 <h2>Introducing tidyCpp</h2>
 <p>The <code>tidyCpp</code> package offers a simple, small and clean C++ layer over the C API offered by R. This vignette highlights a few usage examples, often taken from the <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html"><em>Writing R Extensions</em> vignette that comes with R</a>, to highlight some features.</p>
-<p><code>tidyCpp</code> has no further dependencies on any other package. It can however be used with <a href="https://www.rcpp.org">Rcpp</a> simply to take advantage of its helper functions <code>cppFunction()</code> or <code>sourceCpp()</code>.</p>
+<p><code>tidyCpp</code> has no further dependencies on any other package. It can however be used with <a href="http://www.rcpp.org">Rcpp</a> simply to take advantage of its helper functions <code>cppFunction()</code> or <code>sourceCpp()</code>.</p>
 <p><code>tidyCpp</code> is still a fairly young and small package. Please free to contribute by make suggestions, or sending bugfixes or extension proposals.</p>
 <section id="snippet-one-dimnames" class="level3">
 <h3>Snippet One: dimnames</h3>
@@ -361,85 +384,85 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="column" style="width:49.75%;">
 <section id="using-the-c-api-for-r" class="level4">
 <h4>Using the C API for R</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1"></a><span class="pp">#define R_NO_REMAP</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="pp">#include </span><span class="im">&lt;R.h&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="pp">#include </span><span class="im">&lt;Rinternals.h&gt;</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a>SEXP out(SEXP x, SEXP y)</span>
-<span id="cb1-7"><a href="#cb1-7"></a>{</span>
-<span id="cb1-8"><a href="#cb1-8"></a>  <span class="dt">int</span> nx = Rf_length(x), ny = Rf_length(y);</span>
-<span id="cb1-9"><a href="#cb1-9"></a>  SEXP ans =</span>
-<span id="cb1-10"><a href="#cb1-10"></a>    PROTECT(Rf_allocMatrix(REALSXP, nx, ny));</span>
-<span id="cb1-11"><a href="#cb1-11"></a>  <span class="dt">double</span> *rx = REAL(x),</span>
-<span id="cb1-12"><a href="#cb1-12"></a>    *ry = REAL(y),</span>
-<span id="cb1-13"><a href="#cb1-13"></a>    *rans = REAL(ans);</span>
-<span id="cb1-14"><a href="#cb1-14"></a></span>
-<span id="cb1-15"><a href="#cb1-15"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nx; i++) {</span>
-<span id="cb1-16"><a href="#cb1-16"></a>    <span class="dt">double</span> tmp = rx[i];</span>
-<span id="cb1-17"><a href="#cb1-17"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; ny; j++)</span>
-<span id="cb1-18"><a href="#cb1-18"></a>      rans[i + nx*j] = tmp * ry[j];</span>
-<span id="cb1-19"><a href="#cb1-19"></a>  }</span>
-<span id="cb1-20"><a href="#cb1-20"></a></span>
-<span id="cb1-21"><a href="#cb1-21"></a>  SEXP dimnames =</span>
-<span id="cb1-22"><a href="#cb1-22"></a>    PROTECT(Rf_allocVector(VECSXP, <span class="dv">2</span>));</span>
-<span id="cb1-23"><a href="#cb1-23"></a>  SET_VECTOR_ELT(dimnames, <span class="dv">0</span>,</span>
-<span id="cb1-24"><a href="#cb1-24"></a>                 Rf_getAttrib(x, R_NamesSymbol));</span>
-<span id="cb1-25"><a href="#cb1-25"></a>  SET_VECTOR_ELT(dimnames, <span class="dv">1</span>,</span>
-<span id="cb1-26"><a href="#cb1-26"></a>                 Rf_getAttrib(y, R_NamesSymbol));</span>
-<span id="cb1-27"><a href="#cb1-27"></a>  Rf_setAttrib(ans, R_DimNamesSymbol, dimnames);</span>
-<span id="cb1-28"><a href="#cb1-28"></a></span>
-<span id="cb1-29"><a href="#cb1-29"></a>  UNPROTECT(<span class="dv">2</span>);</span>
-<span id="cb1-30"><a href="#cb1-30"></a>  <span class="cf">return</span> ans;</span>
-<span id="cb1-31"><a href="#cb1-31"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define R_NO_REMAP</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;R.h&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rinternals.h&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>SEXP out(SEXP x, SEXP y)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> nx = Rf_length(x), ny = Rf_length(y);</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  SEXP ans =</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    PROTECT(Rf_allocMatrix(REALSXP, nx, ny));</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> *rx = REAL(x),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    *ry = REAL(y),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    *rans = REAL(ans);</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nx; i++) {</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> tmp = rx[i];</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; ny; j++)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      rans[i + nx*j] = tmp * ry[j];</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  SEXP dimnames =</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    PROTECT(Rf_allocVector(VECSXP, <span class="dv">2</span>));</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  SET_VECTOR_ELT(dimnames, <span class="dv">0</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>                 Rf_getAttrib(x, R_NamesSymbol));</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  SET_VECTOR_ELT(dimnames, <span class="dv">1</span>,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>                 Rf_getAttrib(y, R_NamesSymbol));</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  Rf_setAttrib(ans, R_DimNamesSymbol, dimnames);</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  UNPROTECT(<span class="dv">2</span>);</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ans;</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </section>
 </div><div class="column" style="width:0.5%;">
 <p> </p>
 </div><div class="column" style="width:49.75%;">
 <section id="using-tidycpp" class="level4">
 <h4>Using tidyCpp</h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="co">// [[Rcpp::depends(tidyCpp)]]</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a></span>
-<span id="cb2-4"><a href="#cb2-4"></a></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a>SEXP out(SEXP x, SEXP y)</span>
-<span id="cb2-7"><a href="#cb2-7"></a>{</span>
-<span id="cb2-8"><a href="#cb2-8"></a>  <span class="dt">int</span> nx = R::length(x), ny = R::length(y);</span>
-<span id="cb2-9"><a href="#cb2-9"></a>  SEXP ans =</span>
-<span id="cb2-10"><a href="#cb2-10"></a>    R::Shield(R::allocMatrixReal(nx, ny));</span>
-<span id="cb2-11"><a href="#cb2-11"></a>  <span class="dt">double</span> *rx = R::numericPointer(x),</span>
-<span id="cb2-12"><a href="#cb2-12"></a>    *ry = R::numericPointer(y),</span>
-<span id="cb2-13"><a href="#cb2-13"></a>    *rans = R::numericPointer(ans);</span>
-<span id="cb2-14"><a href="#cb2-14"></a></span>
-<span id="cb2-15"><a href="#cb2-15"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nx; i++) {</span>
-<span id="cb2-16"><a href="#cb2-16"></a>    <span class="dt">double</span> tmp = rx[i];</span>
-<span id="cb2-17"><a href="#cb2-17"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; ny; j++)</span>
-<span id="cb2-18"><a href="#cb2-18"></a>      rans[i + nx*j] = tmp * ry[j];</span>
-<span id="cb2-19"><a href="#cb2-19"></a>  }</span>
-<span id="cb2-20"><a href="#cb2-20"></a></span>
-<span id="cb2-21"><a href="#cb2-21"></a>  SEXP dimnames =</span>
-<span id="cb2-22"><a href="#cb2-22"></a>    R::Shield(R::allocVectorList(<span class="dv">2</span>));</span>
-<span id="cb2-23"><a href="#cb2-23"></a>  R::setVectorElement(dimnames, <span class="dv">0</span>,</span>
-<span id="cb2-24"><a href="#cb2-24"></a>                      R::getNames(x));</span>
-<span id="cb2-25"><a href="#cb2-25"></a>  R::setVectorElement(dimnames, <span class="dv">1</span>,</span>
-<span id="cb2-26"><a href="#cb2-26"></a>                      R::getNames(y));</span>
-<span id="cb2-27"><a href="#cb2-27"></a>  R::setDimNames(ans, dimnames);</span>
-<span id="cb2-28"><a href="#cb2-28"></a></span>
-<span id="cb2-29"><a href="#cb2-29"></a>  <span class="cf">return</span> ans;</span>
-<span id="cb2-30"><a href="#cb2-30"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::depends(tidyCpp)]]</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>SEXP out(SEXP x, SEXP y)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> nx = R::length(x), ny = R::length(y);</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  R::Protect ans(R::allocMatrixReal(nx, ny));</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> *rx = R::numericPointer(x),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    *ry = R::numericPointer(y),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    *rans = R::numericPointer(ans);</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nx; i++) {</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> tmp = rx[i];</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; ny; j++)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      rans[i + nx*j] = tmp * ry[j];</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  R::Protect dimnames(R::allocVectorList(<span class="dv">2</span>));</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  R::setVectorElement(dimnames, <span class="dv">0</span>,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>                      R::getNames(x));</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  R::setVectorElement(dimnames, <span class="dv">1</span>,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                      R::getNames(y));</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  R::setDimNames(ans, dimnames);</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ans;</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </section>
 </div>
 </div>
 <p>Some key differences:</p>
 <ul>
 <li>a single header <code>tidyCpp</code>: simple and clean;</li>
-<li>no <code>PROTECT</code> and <code>UNPROTECT</code> with manual calling of the number of calls made: C++ takes care of that for us via <code>Shield</code> which we borrowed (in a simplified form) from Rcpp;</li>
+<li>no <code>PROTECT</code> and <code>UNPROTECT</code> with manual calling of the number of calls made: C++ takes care of that for us via <code>Protect</code> which is a modernized (and simplified) version of class <code>Shield</code> in Rcpp (and see below for more discussion of <code>Protect</code>);</li>
 <li>no <code>Rf_*</code> calls: everything used comes from a clean new namespace <code>R</code> and is easily identified;</li>
 <li>types are made explicit in the name of the called function sequence rather than enum;</li>
 <li>consistent naming that aligns with language convention:
 <ul>
-<li><em>types</em> such as <code>Shield</code> are capitalized, and</li>
+<li><em>types</em> such as <code>Protect</code> are capitalized, and</li>
 <li><em>verbs</em> such as the allocators or converters are camelCase;</li>
 </ul></li>
 <li>overall less wordy and shorter, <em>e.g.</em>, <code>R::getNames(x)</code> instead of <code>Rf_getAttrib(x, R_NamesSymbol)</code>;</li>
@@ -455,72 +478,222 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="column" style="width:49.75%;">
 <section id="using-the-c-api-for-r-1" class="level4">
 <h4>Using the C API for R</h4>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1"></a><span class="pp">#define R_NO_REMAP</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="pp">#include </span><span class="im">&lt;R.h&gt;</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a><span class="pp">#include </span><span class="im">&lt;Rinternals.h&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a>SEXP convolve2(SEXP a, SEXP b)</span>
-<span id="cb3-7"><a href="#cb3-7"></a>{</span>
-<span id="cb3-8"><a href="#cb3-8"></a>  <span class="dt">int</span> na, nb, nab;</span>
-<span id="cb3-9"><a href="#cb3-9"></a>  <span class="dt">double</span> *xa, *xb, *xab;</span>
-<span id="cb3-10"><a href="#cb3-10"></a>  SEXP ab;</span>
-<span id="cb3-11"><a href="#cb3-11"></a></span>
-<span id="cb3-12"><a href="#cb3-12"></a>  a = PROTECT(Rf_coerceVector(a, REALSXP));</span>
-<span id="cb3-13"><a href="#cb3-13"></a>  b = PROTECT(Rf_coerceVector(b, REALSXP));</span>
-<span id="cb3-14"><a href="#cb3-14"></a>  na = Rf_length(a);</span>
-<span id="cb3-15"><a href="#cb3-15"></a>  nb = Rf_length(b);</span>
-<span id="cb3-16"><a href="#cb3-16"></a>  nab = na + nb - <span class="dv">1</span>;</span>
-<span id="cb3-17"><a href="#cb3-17"></a>  ab = PROTECT(Rf_allocVector(REALSXP, nab));</span>
-<span id="cb3-18"><a href="#cb3-18"></a>  xa = REAL(a);</span>
-<span id="cb3-19"><a href="#cb3-19"></a>  xb = REAL(b);</span>
-<span id="cb3-20"><a href="#cb3-20"></a>  xab = REAL(ab);</span>
-<span id="cb3-21"><a href="#cb3-21"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nab; i++)</span>
-<span id="cb3-22"><a href="#cb3-22"></a>    xab[i] = <span class="fl">0.0</span>;</span>
-<span id="cb3-23"><a href="#cb3-23"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; na; i++)</span>
-<span id="cb3-24"><a href="#cb3-24"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; nb; j++)</span>
-<span id="cb3-25"><a href="#cb3-25"></a>      xab[i + j] += xa[i] * xb[j];</span>
-<span id="cb3-26"><a href="#cb3-26"></a>  UNPROTECT(<span class="dv">3</span>);</span>
-<span id="cb3-27"><a href="#cb3-27"></a>  <span class="cf">return</span> ab;</span>
-<span id="cb3-28"><a href="#cb3-28"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define R_NO_REMAP</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;R.h&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rinternals.h&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>SEXP convolve2(SEXP a, SEXP b)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> na, nb, nab;</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> *xa, *xb, *xab;</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  SEXP ab;</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  a = PROTECT(Rf_coerceVector(a, REALSXP));</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  b = PROTECT(Rf_coerceVector(b, REALSXP));</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  na = Rf_length(a);</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  nb = Rf_length(b);</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  nab = na + nb - <span class="dv">1</span>;</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  ab = PROTECT(Rf_allocVector(REALSXP, nab));</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  xa = REAL(a);</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  xb = REAL(b);</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  xab = REAL(ab);</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nab; i++)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    xab[i] = <span class="fl">0.0</span>;</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; na; i++)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; nb; j++)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>      xab[i + j] += xa[i] * xb[j];</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  UNPROTECT(<span class="dv">3</span>);</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ab;</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </section>
 </div><div class="column" style="width:0.5%;">
 <p> </p>
 </div><div class="column" style="width:49.75%;">
 <section id="using-tidycpp-1" class="level4">
 <h4>Using tidyCpp</h4>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="co">// [[Rcpp::depends(tidyCpp)]]</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a></span>
-<span id="cb4-4"><a href="#cb4-4"></a></span>
-<span id="cb4-5"><a href="#cb4-5"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a>SEXP convolve2(SEXP a, SEXP b)</span>
-<span id="cb4-7"><a href="#cb4-7"></a>{</span>
-<span id="cb4-8"><a href="#cb4-8"></a>  <span class="dt">int</span> na, nb, nab;</span>
-<span id="cb4-9"><a href="#cb4-9"></a>  <span class="dt">double</span> *xa, *xb, *xab;</span>
-<span id="cb4-10"><a href="#cb4-10"></a>  SEXP ab;</span>
-<span id="cb4-11"><a href="#cb4-11"></a></span>
-<span id="cb4-12"><a href="#cb4-12"></a>  a = R::Shield(R::coerceVectorNumeric(a));</span>
-<span id="cb4-13"><a href="#cb4-13"></a>  b = R::Shield(R::coerceVectorNumeric(b));</span>
-<span id="cb4-14"><a href="#cb4-14"></a>  na = R::length(a);</span>
-<span id="cb4-15"><a href="#cb4-15"></a>  nb = R::length(b);</span>
-<span id="cb4-16"><a href="#cb4-16"></a>  nab = na + nb - <span class="dv">1</span>;</span>
-<span id="cb4-17"><a href="#cb4-17"></a>  ab = R::Shield(R::allocVectorNumeric(nab));</span>
-<span id="cb4-18"><a href="#cb4-18"></a>  xa = R::numericPointer(a);</span>
-<span id="cb4-19"><a href="#cb4-19"></a>  xb = R::numericPointer(b);</span>
-<span id="cb4-20"><a href="#cb4-20"></a>  xab = R::numericPointer(ab);</span>
-<span id="cb4-21"><a href="#cb4-21"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nab; i++)</span>
-<span id="cb4-22"><a href="#cb4-22"></a>    xab[i] = <span class="fl">0.0</span>;</span>
-<span id="cb4-23"><a href="#cb4-23"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; na; i++)</span>
-<span id="cb4-24"><a href="#cb4-24"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; nb; j++)</span>
-<span id="cb4-25"><a href="#cb4-25"></a>      xab[i + j] += xa[i] * xb[j];</span>
-<span id="cb4-26"><a href="#cb4-26"></a>  <span class="cf">return</span> ab;</span>
-<span id="cb4-27"><a href="#cb4-27"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::depends(tidyCpp)]]</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>SEXP convolve2(SEXP a, SEXP b)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> na, nb, nab;</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> *xa, *xb, *xab;</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  R::Protect pa(R::coerceVectorNumeric(a));</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  R::Protect pb(R::coerceVectorNumeric(b));</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  na = R::length(pa);</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  nb = R::length(pb);</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  nab = na + nb - <span class="dv">1</span>;</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  R::Protect ab(R::allocVectorNumeric(nab));</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  xa = R::numericPointer(pa);</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  xb = R::numericPointer(pb);</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  xab = R::numericPointer(ab);</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nab; i++)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    xab[i] = <span class="fl">0.0</span>;</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; na; i++)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; nb; j++)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>      xab[i + j] += xa[i] * xb[j];</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ab;</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </section>
 </div>
 </div>
 <p>Like the previous example, the new version operates without macros, does not require manual counting in <code>PROTECT</code> and <code>UNPROTECT</code> and is, to our eyes, a little more readable.</p>
+<p>As the existing example from <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Calling-_002eCall">Writing R Extension, Section 5.10.1</a> used <code>PROTECT</code> on the two incoming <code>SEXP</code> objects (whereas the previous example, from the same source, does not) we need to allocate two tempary objects <code>pa</code> and <code>pb</code> with the explicit C++ ownership providing the protect and unprotect pairing. Because <code>pa</code> and <code>pb</code> go out of scope at the end of the function, the destructor will then unprotect correctly.</p>
 <p>(And as above, the two ‘tags’ for Rcpp use are present only to facilitate use via the <code>Rcpp::sourceCpp()</code> package.)</p>
+</section>
+<section id="snippet-three-uchardet" class="level3">
+<h3>Snippet Three: uchardet</h3>
+<p>For the third example, we use an unrelated package: <a href="https://cran.r-project.org/package=uchardet">uchardet</a> which provides R bindings to the eponymous C++ library to detect character encodings. This example cannot be sourced simply into R as it requires the underlying C++ library. One can, however, download the R package and then replace the file <code>src/detect.cpp</code> with the content below, and add <code>LinkingTo: tidyCpp</code> to the <code>DESCRIPTION</code> file.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;R_ext/Visibility.h&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;fstream&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;uchardet.h&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="pp">#define BUFFER_SIZE </span><span class="dv">65536</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> buffer[BUFFER_SIZE];</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>SEXP attribute_hidden get_charset(<span class="dt">uchardet_t</span> handle) {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">char</span>* ans = uchardet_get_charset(handle);</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (strlen(ans) == <span class="dv">0</span>) {</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Rf_warning(&quot;Can not detect encoding.&quot;);</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> R::mkChar(ans);</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>SEXP attribute_hidden do_detect_sexp(SEXP x, <span class="dt">uchardet_t</span> handle) {</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">R_xlen_t</span> x_len = R::xlength(x);</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (x_len == <span class="dv">0</span>) {</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">char</span>* x_data;</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">switch</span>(R::Typeof(x)) {</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> CHARSXP: {</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (x == NA_STRING) {</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>      x_data = R::charPointer(x);</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>      <span class="cf">break</span>;</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> RAWSXP: {</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>      x_data = (<span class="at">const</span> <span class="dt">char</span>*) R::rawPointer(x);</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>      <span class="cf">break</span>;</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">default</span>: {</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>      R::warning(<span class="st">&quot;Unsupported data type &#39;</span><span class="sc">%s</span><span class="st">&#39;.&quot;</span>, R::type2char(R::Typeof(x)));</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> retval = uchardet_handle_data(handle, x_data, x_len);</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  uchardet_data_end(handle);</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (retval != <span class="dv">0</span>) {</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Rf_warning(&quot;Can not handling data.&quot;);</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> get_charset(handle);</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>SEXP attribute_hidden do_detect_file(SEXP x, <span class="dt">uchardet_t</span> handle) {</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (x == NA_STRING) {</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">char</span>* fname = R::charPointer(x);</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>ifstream fs(R_ExpandFileName(fname), <span class="bu">std::</span>ios<span class="bu">::</span>binary);</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (!fs.is_open()) {</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>    R::warning(<span class="st">&quot;Can not open file &#39;</span><span class="sc">%s</span><span class="st">&#39;.&quot;</span>, fname);</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> (!fs.eof()) {</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>    fs.read(buffer, BUFFER_SIZE);</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>size_t len = fs.gcount();</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>    uchardet_handle_data(handle, buffer, len);</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>  uchardet_data_end(handle);</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>  fs.close();</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> get_charset(handle);</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>SEXP attribute_hidden do_detect_vec(SEXP x, T fun) {</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (R::Typeof(x) != STRSXP) {</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>    R::error(<span class="st">&quot;&#39;x&#39; must be character vector.&quot;</span>);</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>  <span class="dt">R_xlen_t</span> n = R::xlength(x);</span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>  R::Protect res(R::allocVectorCharacter(n));</span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>  <span class="dt">uchardet_t</span> handle = uchardet_new();</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="dt">R_len_t</span> i = <span class="dv">0</span>; i &lt; n; ++i) {</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>    R::setStringElement(res, i, fun(R::stringElement(x, i), handle));</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>    uchardet_reset(handle);</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>  uchardet_delete(handle);</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> res;</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>SEXP detect_character(SEXP x) {</span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> do_detect_vec(x, do_detect_sexp);</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>SEXP detect_file(SEXP x) {</span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> do_detect_vec(x, do_detect_file);</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>SEXP detect_raw(SEXP x) {</span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (R::Typeof(x) != RAWSXP) {</span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>    R::error(<span class="st">&quot;&#39;x&#39; must be raw vector.&quot;</span>);</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>  R::Protect res(R::allocVectorCharacter(<span class="dv">1</span>));</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>  <span class="dt">uchardet_t</span> handle = uchardet_new();</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>  R::setStringElement(res, <span class="dv">0</span>, do_detect_sexp(x, handle));</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>  uchardet_delete(handle);</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> res;</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</section>
+<section id="protect-and-unprotect" class="level3">
+<h3>PROTECT and UNPROTECT</h3>
+<p>The <code>R::Protect()</code> class ensures proper <code>PROTECT</code> wrapping for the lifetime of an object. A very important, yet easy-to-overlook, detail is that the form of assigning to a <code>SEXP</code> variable <em>looks</em> correct, but is in fact incorrect. For example in <code>SEXP ans = R::Protect(R::allocMatrixReal(nx, ny));</code>, the class will correctly construct around the result from <code>allocMatrix()</code>. But as it assigned to a <code>SEXP</code> variable, the compiler realizes that it is a temporary object and after calling <code>operator SEXP()</code> the destructor is called—essentially immediately.</p>
+<p>So the correct use is to write <code>R::Protect ans(R::allocMatrixReal(nx, ny));</code> which turns this into an instance of the the <code>Protect</code> which will live to the end of the scope and only <code>UNRPROTECT</code> via the destructor at the end of the scope.</p>
+<p>The example file <code>snippets/protectExamples.cpp</code> illustrates this by using <a href="https://cran.r-project.org/package=RcppSpdlog">RcppSpdlog</a> to log invocation of the three relevant parts constructor, destructor and <code>operator SEXP()</code> for both the correct and incorrect form of the ’convolution()<code>example. When</code>sourceCpp()`-ed into an R session, and skipping the first example in the file, we may see the following result (with of course different timestamps).</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>R<span class="sc">&gt;</span> <span class="fu">convolveIncorrect</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418260</span>] starting convolveIncorrect</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418286</span>] entered ctor</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418288</span>] entered <span class="fu">SEXP</span>()</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418290</span>] entered dtor</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418291</span>] entered ctor</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418293</span>] entered <span class="fu">SEXP</span>()</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418295</span>] entered dtor</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418297</span>] entered ctor</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418298</span>] entered <span class="fu">SEXP</span>()</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418300</span>] entered dtor</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418302</span>] ending convolveIncorrect</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>]  <span class="dv">4</span> <span class="dv">13</span> <span class="dv">28</span> <span class="dv">27</span> <span class="dv">18</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>R<span class="sc">&gt;</span> <span class="fu">convolveCorrect</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>))</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418431</span>] starting convolveCorrect</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418434</span>] entered ctor</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418435</span>] entered ctor</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418436</span>] entered <span class="fu">SEXP</span>()</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418438</span>] entered <span class="fu">SEXP</span>()</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418439</span>] entered ctor</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418441</span>] entered <span class="fu">SEXP</span>()</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418442</span>] entered <span class="fu">SEXP</span>()</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418444</span>] entered <span class="fu">SEXP</span>()</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418445</span>] ending convolveCorrect</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418447</span>] entered <span class="fu">SEXP</span>()</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418449</span>] entered dtor</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418450</span>] entered dtor</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418452</span>] entered dtor</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>]  <span class="dv">4</span> <span class="dv">13</span> <span class="dv">28</span> <span class="dv">27</span> <span class="dv">18</span></span></code></pre></div>
+<p>In the first example, we see that the triplet constructor/SEXP()/destructor is called twice when the two vectors are coerced, and then a third time when the result vector is allocated. This shows the incorrect behavior: destructors essentially immediately after constructors, leaving the object unprotected—which is not what was intended.</p>
+<p>The second example shows the correct behavior. Two constructor calls, then two <code>SEXP()</code> calls (when the length are determined), another constructor followed by three <code>SEXP()</code> calls from the three <code>numericPointer()</code> calls—as well as a final <code>SEXP()</code> call for the return result and three destructors at end. This is the intended behavior of protecting the three objects during their lifetime.</p>
 </section>
 <section id="discussion" class="level3">
 <h3>Discussion</h3>
@@ -528,7 +701,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </section>
 <section id="summary" class="level3">
 <h3>Summary</h3>
-<p>The <code>tidyCpp</code> package provides a cleaner simplifying layer on top of the time-tested but somewhat crusty C API for R.</p>
+<p>The <code>tidyCpp</code> package provides a simplifying layer on top of the time-tested but somewhat crusty C API for R.</p>
 </section>
 </section>
 </article>

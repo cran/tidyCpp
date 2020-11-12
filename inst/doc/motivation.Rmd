@@ -1,25 +1,15 @@
 ---
 title: "tidyCpp Motivation"
 author: "Dirk Eddelbuettel"
-date: "Initial (draft) version dated October 2020"
+date: "November 2020"
 output:
   minidown::mini_document:
     framework: water
-    code_folding:
-      source: show
-      output: show
-      message: hide
-      warning: hide
-      error: hide
 vignette: >
   %\VignetteIndexEntry{tidyCpp Motivation}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ## Introducing tidyCpp
 
@@ -28,7 +18,7 @@ highlights a few usage examples, often taken from the [_Writing R Extensions_ vi
 with R](https://cran.r-project.org/doc/manuals/r-release/R-exts.html), to highlight some features.
 
 `tidyCpp` has no further dependencies on any other package.  It can however be used with
-[Rcpp](https://www.rcpp.org) simply to take advantage of its helper functions `cppFunction()` or
+[Rcpp](http://www.rcpp.org) simply to take advantage of its helper functions `cppFunction()` or
 `sourceCpp()`.
 
 `tidyCpp` is still a fairly young and small package.  Please free to contribute by make suggestions,
@@ -105,8 +95,8 @@ SEXP out(SEXP x, SEXP y)
 SEXP out(SEXP x, SEXP y)
 {
   int nx = R::length(x), ny = R::length(y);
-  SEXP ans =
-    R::Shield(R::allocMatrixReal(nx, ny));
+  R::Protect ans(R::allocMatrixReal(nx, ny));
+
   double *rx = R::numericPointer(x),
     *ry = R::numericPointer(y),
     *rans = R::numericPointer(ans);
@@ -117,8 +107,8 @@ SEXP out(SEXP x, SEXP y)
       rans[i + nx*j] = tmp * ry[j];
   }
 
-  SEXP dimnames =
-    R::Shield(R::allocVectorList(2));
+  R::Protect dimnames(R::allocVectorList(2));
+
   R::setVectorElement(dimnames, 0,
                       R::getNames(x));
   R::setVectorElement(dimnames, 1,
@@ -135,11 +125,12 @@ Some key differences:
 
 - a single header `tidyCpp`: simple and clean;
 - no `PROTECT` and `UNPROTECT` with manual calling of the number of calls made: C++ takes care of
-  that for us via `Shield` which we borrowed (in a simplified form) from Rcpp;
+  that for us via `Protect` which is a modernized (and simplified) version of
+  class `Shield` in Rcpp (and see below for more discussion of `Protect`);
 - no `Rf_*` calls: everything used comes from a clean new namespace `R` and is easily identified;
 - types are made explicit in the name of the called function sequence rather than enum;
 - consistent naming that aligns with language convention:
-    - _types_ such as `Shield` are capitalized, and
+    - _types_ such as `Protect` are capitalized, and
     - _verbs_ such as the allocators or converters are camelCase;
 - overall less wordy and shorter, _e.g._, `R::getNames(x)` instead of `Rf_getAttrib(x, R_NamesSymbol)`;
 - no macros are being used.
@@ -217,16 +208,16 @@ SEXP convolve2(SEXP a, SEXP b)
 {
   int na, nb, nab;
   double *xa, *xb, *xab;
-  SEXP ab;
 
-  a = R::Shield(R::coerceVectorNumeric(a));
-  b = R::Shield(R::coerceVectorNumeric(b));
-  na = R::length(a);
-  nb = R::length(b);
+
+  R::Protect pa(R::coerceVectorNumeric(a));
+  R::Protect pb(R::coerceVectorNumeric(b));
+  na = R::length(pa);
+  nb = R::length(pb);
   nab = na + nb - 1;
-  ab = R::Shield(R::allocVectorNumeric(nab));
-  xa = R::numericPointer(a);
-  xb = R::numericPointer(b);
+  R::Protect ab(R::allocVectorNumeric(nab));
+  xa = R::numericPointer(pa);
+  xb = R::numericPointer(pb);
   xab = R::numericPointer(ab);
   for(int i = 0; i < nab; i++)
     xab[i] = 0.0;
@@ -242,9 +233,200 @@ SEXP convolve2(SEXP a, SEXP b)
 Like the previous example, the new version operates without macros, does not require manual counting
 in `PROTECT` and `UNPROTECT` and is, to our eyes, a little more readable.
 
+As the existing example from [Writing R Extension, Section
+5.10.1](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Calling-_002eCall)
+used `PROTECT` on the two incoming `SEXP` objects (whereas the previous
+example, from the same source, does not) we need to allocate two tempary
+objects `pa` and `pb` with the explicit C++ ownership providing the protect
+and unprotect pairing.  Because `pa` and `pb` go out of scope at the end of
+the function, the destructor will then unprotect correctly.
+
 (And as above, the two 'tags' for Rcpp use are present only to facilitate use
 via the `Rcpp::sourceCpp()` package.)
 
+
+### Snippet Three: uchardet
+
+For the third example, we use an unrelated package:
+[uchardet](https://cran.r-project.org/package=uchardet) which provides R bindings to the eponymous
+C++ library to detect character encodings. This example cannot be sourced simply into R as it
+requires the underlying C++ library.  One can, however, download the R package and then replace
+the file `src/detect.cpp` with the content below, and add `LinkingTo: tidyCpp` to the `DESCRIPTION`
+file.
+
+```c++
+#include <tidyCpp>
+#include <R_ext/Visibility.h>
+#include <fstream>
+#include <uchardet.h>
+
+#define BUFFER_SIZE 65536
+char buffer[BUFFER_SIZE];
+
+SEXP attribute_hidden get_charset(uchardet_t handle) {
+  const char* ans = uchardet_get_charset(handle);
+  if (strlen(ans) == 0) {
+    // Rf_warning("Can not detect encoding.");
+    return NA_STRING;
+  }
+  return R::mkChar(ans);
+}
+
+SEXP attribute_hidden do_detect_sexp(SEXP x, uchardet_t handle) {
+  R_xlen_t x_len = R::xlength(x);
+  if (x_len == 0) {
+    return NA_STRING;
+  }
+  const char* x_data;
+  switch(R::Typeof(x)) {
+    case CHARSXP: {
+      if (x == NA_STRING) {
+        return NA_STRING;
+      }
+      x_data = R::charPointer(x);
+      break;
+    }
+    case RAWSXP: {
+      x_data = (const char*) R::rawPointer(x);
+      break;
+    }
+    default: {
+      R::warning("Unsupported data type '%s'.", R::type2char(R::Typeof(x)));
+      return NA_STRING;
+    }
+  }
+  int retval = uchardet_handle_data(handle, x_data, x_len);
+  uchardet_data_end(handle);
+  if (retval != 0) {
+    // Rf_warning("Can not handling data.");
+    return NA_STRING;
+  }
+
+  return get_charset(handle);
+}
+
+SEXP attribute_hidden do_detect_file(SEXP x, uchardet_t handle) {
+  if (x == NA_STRING) {
+    return NA_STRING;
+  }
+
+  const char* fname = R::charPointer(x);
+  std::ifstream fs(R_ExpandFileName(fname), std::ios::binary);
+  if (!fs.is_open()) {
+    R::warning("Can not open file '%s'.", fname);
+    return NA_STRING;
+  }
+
+  while (!fs.eof()) {
+    fs.read(buffer, BUFFER_SIZE);
+    std::size_t len = fs.gcount();
+    uchardet_handle_data(handle, buffer, len);
+  }
+  uchardet_data_end(handle);
+  fs.close();
+
+  return get_charset(handle);
+}
+
+template<typename T>
+SEXP attribute_hidden do_detect_vec(SEXP x, T fun) {
+  if (R::Typeof(x) != STRSXP) {
+    R::error("'x' must be character vector.");
+  }
+  R_xlen_t n = R::xlength(x);
+  R::Protect res(R::allocVectorCharacter(n));
+  uchardet_t handle = uchardet_new();
+  for (R_len_t i = 0; i < n; ++i) {
+    R::setStringElement(res, i, fun(R::stringElement(x, i), handle));
+    uchardet_reset(handle);
+  }
+  uchardet_delete(handle);
+  return res;
+}
+
+SEXP detect_character(SEXP x) {
+  return do_detect_vec(x, do_detect_sexp);
+}
+
+SEXP detect_file(SEXP x) {
+  return do_detect_vec(x, do_detect_file);
+}
+
+SEXP detect_raw(SEXP x) {
+  if (R::Typeof(x) != RAWSXP) {
+    R::error("'x' must be raw vector.");
+  }
+  R::Protect res(R::allocVectorCharacter(1));
+  uchardet_t handle = uchardet_new();
+  R::setStringElement(res, 0, do_detect_sexp(x, handle));
+  uchardet_delete(handle);
+  return res;
+}
+
+```
+
+### PROTECT and UNPROTECT
+
+The `R::Protect()` class ensures proper `PROTECT` wrapping for the lifetime of an object. A very
+important, yet easy-to-overlook, detail is that the form of assigning to a `SEXP` variable _looks_
+correct, but is in fact incorrect. For example in `SEXP ans = R::Protect(R::allocMatrixReal(nx,
+ny));`, the class will correctly construct around the result from `allocMatrix()`. But as it
+assigned to a `SEXP` variable, the compiler realizes that it is a temporary object and after calling
+`operator SEXP()` the destructor is called---essentially immediately.
+
+So the correct use is to write `R::Protect ans(R::allocMatrixReal(nx, ny));` which turns this into
+an instance of the the `Protect` which will live to the end of the scope and only `UNRPROTECT` via
+the destructor at the end of the scope.
+
+The example file `snippets/protectExamples.cpp` illustrates this by using
+[RcppSpdlog](https://cran.r-project.org/package=RcppSpdlog) to log invocation of the three relevant
+parts constructor, destructor and `operator SEXP()` for both the correct and incorrect form of the
+'convolution()` example. When `sourceCpp()`-ed into an R session, and skipping the first example in
+the file, we may see the following result (with of course different timestamps).
+
+```r
+R> convolveIncorrect(c(1, 2, 3), c(4, 5, 6))
+[11:25:56.418260] starting convolveIncorrect
+[11:25:56.418286] entered ctor
+[11:25:56.418288] entered SEXP()
+[11:25:56.418290] entered dtor
+[11:25:56.418291] entered ctor
+[11:25:56.418293] entered SEXP()
+[11:25:56.418295] entered dtor
+[11:25:56.418297] entered ctor
+[11:25:56.418298] entered SEXP()
+[11:25:56.418300] entered dtor
+[11:25:56.418302] ending convolveIncorrect
+[1]  4 13 28 27 18
+
+R> convolveCorrect(c(1, 2, 3), c(4, 5, 6))
+[11:25:56.418431] starting convolveCorrect
+[11:25:56.418434] entered ctor
+[11:25:56.418435] entered ctor
+[11:25:56.418436] entered SEXP()
+[11:25:56.418438] entered SEXP()
+[11:25:56.418439] entered ctor
+[11:25:56.418441] entered SEXP()
+[11:25:56.418442] entered SEXP()
+[11:25:56.418444] entered SEXP()
+[11:25:56.418445] ending convolveCorrect
+[11:25:56.418447] entered SEXP()
+[11:25:56.418449] entered dtor
+[11:25:56.418450] entered dtor
+[11:25:56.418452] entered dtor
+[1]  4 13 28 27 18
+```
+
+In the first example, we see that the triplet constructor/SEXP()/destructor is called twice when the
+two vectors are coerced, and then a third time when the result vector is allocated. This shows the
+incorrect behavior: destructors essentially immediately after constructors, leaving the object
+unprotected---which is not what was intended.
+
+The second example shows the correct behavior. Two constructor calls, then two `SEXP()` calls (when
+the length are determined), another constructor followed by three `SEXP()` calls from the three
+`numericPointer()` calls---as well as a final `SEXP()` call for the return result and three
+destructors at end. This is the intended behavior of protecting the three objects during their
+lifetime.
 
 ### Discussion
 
@@ -257,5 +439,5 @@ further dependencies and can be used, or dropped, at will
 
 ### Summary
 
-The `tidyCpp` package provides a cleaner simplifying layer on top of the time-tested but somewhat
-crusty C API for R.
+The `tidyCpp` package provides a simplifying layer on top of the time-tested
+but somewhat crusty C API for R.
