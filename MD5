@@ -1,8 +1,8 @@
-5b6274a71836448752c773623522a1ac *ChangeLog
-2ae86909a28b1d258d42d0da25885b4b *DESCRIPTION
+5546172c90bd42e65aadbdf0daf5fc56 *ChangeLog
+8a93d3035c2bd5bc9635fcf1c3e62cf8 *DESCRIPTION
 68b329da9893e34099c7d8ad5cb9c940 *NAMESPACE
 c84cf6591ee6ba90607c73a77012a6fd *README.md
-fd1f563d0c37ead240406cd1a17e2af4 *build/partial.rdb
+5e6852ddb678d6ad32a4433839529f0d *build/partial.rdb
 d92cfe8519585fab64877597e887e915 *build/vignette.rds
 973a40cb0d06420089162464fc76b8a8 *inst/NEWS.Rd
 fc5a61167245a9cc80484066262ebea5 *inst/doc/motivation.Rmd
@@ -11,8 +11,8 @@ bdaedb733b6071d976dbe49f34f5d04d *inst/include/tidy/defines.h
 829254775ed5a9475d1aee5c88d60a88 *inst/include/tidy/globals.h
 24474183b0df2829a0939156ca9930b0 *inst/include/tidy/internals.h
 2c78236e1bb3c99b87b5fd01dcc91053 *inst/include/tidy/math.h
-ebab468da4bde0f32e29ccec9162c394 *inst/include/tidy/numvec.h
-d0a232ed767c47cba3be41cb936f907c *inst/include/tidy/protect.h
+f5d6bff06a2bf8bf17fb4c64e747a2aa *inst/include/tidy/numvec.h
+6e9a64f810ed8f2979d0f78633e6d3da *inst/include/tidy/protect.h
 4c16d24f6cc90c699148f6c5bc75502e *inst/include/tidy/shield.h
 cef533fac96594c35d06f5c7454d67d7 *inst/include/tidyCpp
 625f2f02945d1bb179b81cb39b2ca669 *inst/snippets/convolveExample.cpp
