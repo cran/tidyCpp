@@ -7,203 +7,239 @@
   <meta name="author" content="Dirk Eddelbuettel" />
   <title>tidyCpp Motivation</title>
   <style>
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
-  <style>
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
+  <style type="text/css">
+body {
+max-width: 50rem;
+margin-left: auto;
+margin-right: auto;
+font-family: system-ui;
 }
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+
+code {
+padding: 2px;
+border-radius: unset;
 }
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+
+pre {
+background-color: unset;
+border: solid #aaa 1px;
+padding: 8px;
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-  </style>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
-  <script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
-  <link href="data:text/css,%40charset%20%22UTF%2D8%22%3Bbody%7Bfont%2Dfamily%3Asystem%2Dui%2C%2Dapple%2Dsystem%2CBlinkMacSystemFont%2CSegoe%20UI%2CRoboto%2COxygen%2CUbuntu%2CCantarell%2CFira%20Sans%2CDroid%20Sans%2CHelvetica%20Neue%2Csans%2Dserif%3Bline%2Dheight%3A1%2E4%3Bmax%2Dwidth%3A800px%3Bmargin%3A20px%20auto%3Bpadding%3A0%2010px%3Bcolor%3A%23363636%3Bbackground%3A%23fff%3Btext%2Drendering%3AoptimizeLegibility%7Dbutton%2Cinput%2Ctextarea%7Btransition%3Abackground%2Dcolor%20%2E1s%20linear%2Cborder%2Dcolor%20%2E1s%20linear%2Ccolor%20%2E1s%20linear%2Cbox%2Dshadow%20%2E1s%20linear%2Ctransform%20%2E1s%20ease%7Dh1%7Bfont%2Dsize%3A2%2E2em%3Bmargin%2Dtop%3A0%7Dh1%2Ch2%2Ch3%2Ch4%2Ch5%2Ch6%7Bmargin%2Dbottom%3A12px%7Dh1%2Ch2%2Ch3%2Ch4%2Ch5%2Ch6%2Cstrong%7Bcolor%3A%23000%7Db%2Ch1%2Ch2%2Ch3%2Ch4%2Ch5%2Ch6%2Cstrong%2Cth%7Bfont%2Dweight%3A600%7Dblockquote%7Bborder%2Dleft%3A4px%20solid%20rgba%280%2C150%2C191%2C%2E67%29%3Bmargin%3A1%2E5em%200%3Bpadding%3A%2E5em%201em%3Bfont%2Dstyle%3Aitalic%7Dblockquote%3Efooter%7Bmargin%2Dtop%3A10px%3Bfont%2Dstyle%3Anormal%7Daddress%2Cblockquote%20cite%7Bfont%2Dstyle%3Anormal%7Da%5Bhref%5E%3Dmailto%5D%3Abefore%7Bcontent%3A%22%F0%9F%93%A7%20%22%7Da%5Bhref%5E%3Dtel%5D%3Abefore%7Bcontent%3A%22%F0%9F%93%9E%20%22%7Da%5Bhref%5E%3Dsms%5D%3Abefore%7Bcontent%3A%22%F0%9F%92%AC%20%22%7Dbutton%2Cinput%5Btype%3Dbutton%5D%2Cinput%5Btype%3Dcheckbox%5D%2Cinput%5Btype%3Dsubmit%5D%7Bcursor%3Apointer%7Dinput%3Anot%28%5Btype%3Dcheckbox%5D%29%3Anot%28%5Btype%3Dradio%5D%29%2Cselect%7Bdisplay%3Ablock%7Dbutton%2Cinput%2Cselect%2Ctextarea%7Bcolor%3A%23000%3Bbackground%2Dcolor%3A%23efefef%3Bfont%2Dfamily%3Ainherit%3Bfont%2Dsize%3Ainherit%3Bmargin%2Dright%3A6px%3Bmargin%2Dbottom%3A6px%3Bpadding%3A10px%3Bborder%3Anone%3Bborder%2Dradius%3A6px%3Boutline%3Anone%7Dbutton%2Cinput%3Anot%28%5Btype%3Dcheckbox%5D%29%3Anot%28%5Btype%3Dradio%5D%29%2Cselect%2Ctextarea%7B%2Dwebkit%2Dappearance%3Anone%7Dtextarea%7Bmargin%2Dright%3A0%3Bwidth%3A100%25%3Bbox%2Dsizing%3Aborder%2Dbox%3Bresize%3Avertical%7Dbutton%2Cinput%5Btype%3Dbutton%5D%2Cinput%5Btype%3Dsubmit%5D%7Bpadding%2Dright%3A30px%3Bpadding%2Dleft%3A30px%7Dbutton%3Ahover%2Cinput%5Btype%3Dbutton%5D%3Ahover%2Cinput%5Btype%3Dsubmit%5D%3Ahover%7Bbackground%3A%23ddd%7Dbutton%3Afocus%2Cinput%3Afocus%2Cselect%3Afocus%2Ctextarea%3Afocus%7Bbox%2Dshadow%3A0%200%200%202px%20rgba%280%2C150%2C191%2C%2E67%29%7Dbutton%3Aactive%2Cinput%5Btype%3Dbutton%5D%3Aactive%2Cinput%5Btype%3Dcheckbox%5D%3Aactive%2Cinput%5Btype%3Dradio%5D%3Aactive%2Cinput%5Btype%3Dsubmit%5D%3Aactive%7Btransform%3AtranslateY%282px%29%7Dbutton%3Adisabled%2Cinput%3Adisabled%2Cselect%3Adisabled%2Ctextarea%3Adisabled%7Bcursor%3Anot%2Dallowed%3Bopacity%3A%2E5%7D%3A%3A%2Dwebkit%2Dinput%2Dplaceholder%7Bcolor%3A%23949494%7D%3A%2Dms%2Dinput%2Dplaceholder%7Bcolor%3A%23949494%7D%3A%3A%2Dms%2Dinput%2Dplaceholder%7Bcolor%3A%23949494%7D%3A%3Aplaceholder%7Bcolor%3A%23949494%7Da%7Btext%2Ddecoration%3Anone%3Bcolor%3A%230076d1%7Da%3Ahover%7Btext%2Ddecoration%3Aunderline%7Dcode%2Ckbd%7Bbackground%3A%23efefef%3Bcolor%3A%23000%3Bpadding%3A5px%3Bborder%2Dradius%3A6px%7Dpre%3Ecode%7Bpadding%3A10px%3Bdisplay%3Ablock%3Boverflow%2Dx%3Aauto%7Dimg%7Bmax%2Dwidth%3A100%25%7Dhr%7Bborder%3Anone%3Bborder%2Dtop%3A1px%20solid%20%23dbdbdb%7Dtable%7Bborder%2Dcollapse%3Acollapse%3Bmargin%2Dbottom%3A10px%3Bwidth%3A100%25%7Dtd%2Cth%7Bpadding%3A6px%3Btext%2Dalign%3Aleft%7Dth%7Bborder%2Dbottom%3A1px%20solid%20%23dbdbdb%7Dtbody%20tr%3Anth%2Dchild%282n%29%7Bbackground%2Dcolor%3A%23efefef%7D%3A%3A%2Dwebkit%2Dscrollbar%7Bheight%3A10px%3Bwidth%3A10px%7D%3A%3A%2Dwebkit%2Dscrollbar%2Dtrack%7Bbackground%3A%23efefef%3Bborder%2Dradius%3A6px%7D%3A%3A%2Dwebkit%2Dscrollbar%2Dthumb%7Bbackground%3A%23d5d5d5%3Bborder%2Dradius%3A6px%7D%3A%3A%2Dwebkit%2Dscrollbar%2Dthumb%3Ahover%7Bbackground%3A%23c4c4c4%7D%0A%0A" rel="stylesheet" />
-  <link href="data:text/css,%0Acode%20%7B%0Apadding%3A%202px%3B%0Aborder%2Dradius%3A%20unset%3B%0A%7D%0A%0Apre%20%7B%0Abackground%2Dcolor%3A%20unset%3B%0Aborder%3A%20solid%20%23aaa%201px%3B%0Apadding%3A%208px%3B%0A%7D%0Apre%2EnumberSource%20%7B%0Amargin%3A%200%3B%0Apadding%2Dleft%3A%200%3B%0A%7D%0Adiv%2EsourceCode%20%7B%0Aoverflow%3A%20visible%3B%0A%7D%0Apre%2C%20pre%2EsourceCode%20%7B%0Aoverflow%2Dx%3A%20auto%3B%0A%7D%0Apre%3Ecode%20%7B%0Awhite%2Dspace%3A%20pre%3B%0Aoverflow%3A%20visible%3B%0Abackground%2Dcolor%3A%20unset%3B%0Apadding%3A%200%3B%0A%7D%0Apre%2EsourceCode%2EnumberSource%20%7B%0Aoverflow%2Dx%3A%20visible%3B%0A%7D%0Apre%2EsourceCode%2EnumberSource%3Ecode%20%7B%0Awhite%2Dspace%3A%20pre%2Dwrap%0A%7D%0Apre%2EsourceCode%2EnumberSource%3Ecode%3Espan%20%7B%0Aleft%3A%208px%3B%0Atext%2Dindent%3A%20%2D4%2E6em%3B%0A%7D%0A%0A%2Echunk%2Dsummary%20%7B%0Atext%2Dalign%3A%20right%3B%0A%7D%0A%2Echunk%2Dsummary%2Bpre%2C%0A%2Echunk%2Dsummary%2Bdiv%2EsourceCode%20%7B%0Amargin%2Dtop%3A%202px%3B%0A%7D%0A%0Anav%20%3E%20ul%20%7B%0Aborder%3A%20%2E0625rem%20solid%20%23444%3B%0Aborder%2Dradius%3A%204px%3B%0Amargin%3A%205px%3B%0Apadding%3A%205px%3B%0A%7D%0Anav%20ul%20%7B%0Alist%2Dstyle%2Dtype%3A%20none%3B%0Apadding%2Dinline%2Dstart%3A%201rem%3B%0A%7D%0Anav%20ul%20li%20%7B%0Apadding%3A%200%3B%0A%7D%0Anav%20ul%20ul%20%7B%0Amargin%2Dtop%3A%200%3B%0Amargin%2Dbottom%3A%200%3B%0Apadding%2Dtop%3A%200%3B%0Apadding%2Dbottom%3A%200%3B%0A%7D%0Anav%20code%20%7B%0Abackground%2Dcolor%3A%20unset%3B%0Acolor%3A%20unset%3B%0A%7D%0A" rel="stylesheet" />
-  <link href="data:text/css,%40media%20screen%20and%20%28max%2Dwidth%3A%20960px%29%20%7B%0Aheader%2C%20nav%2C%20article%20%7B%0Apadding%3A%200%203rem%3B%0A%7D%0A%7D%0A%23TOC%20%7B%0Afont%2Dsize%3A%200%2E9em%3B%0Aborder%3A%20none%3B%0A%7D%0A%23TOC%20%3E%20ul%20%7B%0Abox%2Dsizing%3A%20border%2Dbox%3B%0A%7D%0A%23TOC%20ul%20%7B%0Amargin%3A%200%3B%0A%7D%0A%23TOC%20li%2C%20%23TOC%20a%20%7B%0Amargin%3A%200%3B%0Apadding%3A%200%3B%0A%7D%0A" rel="stylesheet" />
-  <link href="data:text/css,%2Etooltip%20%7B%0Aposition%3A%20relative%3B%0Adisplay%3A%20inline%2Dblock%3B%0A%7D%0A%2Etooltip%3Abefore%2C%20%2Etooltip%3Aafter%20%7B%0Aposition%3A%20absolute%3B%0Aopacity%3A%200%3B%0Aclip%3A%20rect%280%200%200%200%29%3B%0A%2Dwebkit%2Dclip%2Dpath%3A%20inset%28100%25%29%3B%0Aclip%2Dpath%3A%20inset%28100%25%29%3B%0Atransition%3A%20all%200%2E3s%3B%0Az%2Dindex%3A%201010%3B%0Aleft%3A%2050%25%3B%0A%7D%0A%2Etooltip%3Anot%28%2Ebottom%29%3Abefore%2C%20%2Etooltip%3Anot%28%2Ebottom%29%3Aafter%20%7B%0Abottom%3A%2075%25%3B%0A%7D%0A%2Etooltip%2Ebottom%3Abefore%2C%20%2Etooltip%2Ebottom%3Aafter%20%7B%0Atop%3A%2075%25%3B%0A%7D%0A%2Etooltip%3Ahover%3Abefore%2C%20%2Etooltip%3Ahover%3Aafter%2C%20%2Etooltip%3Afocus%3Abefore%2C%20%2Etooltip%3Afocus%3Aafter%20%7B%0Aopacity%3A%201%3B%0Aclip%3A%20auto%3B%0A%2Dwebkit%2Dclip%2Dpath%3A%20inset%280%25%29%3B%0Aclip%2Dpath%3A%20inset%280%25%29%3B%0A%7D%0A%2Etooltip%3Abefore%20%7B%0Acontent%3A%20%27%27%3B%0Abackground%3A%20transparent%3B%0Aborder%3A%200%2E5rem%20solid%20transparent%3B%0Aleft%3A%20calc%2850%25%20%2D%200%2E5rem%29%3B%0A%7D%0A%2Etooltip%3Anot%28%2Ebottom%29%3Abefore%20%7B%0Aborder%2Dtop%2Dcolor%3A%20%23212121%3B%0A%7D%0A%2Etooltip%2Ebottom%3Abefore%20%7B%0Aborder%2Dbottom%2Dcolor%3A%20%23212121%3B%0A%7D%0A%2Etooltip%3Aafter%20%7B%0Acontent%3A%20attr%28aria%2Dlabel%29%3B%0Acolor%3A%20%23fafafa%3B%0Abackground%3A%20%23212121%3B%0Aborder%2Dradius%3A%200%2E125rem%3B%0Apadding%3A%200%2E5rem%3B%0Awhite%2Dspace%3A%20nowrap%3B%0Atransform%3A%20translateX%28%2D50%25%29%3B%0A%7D%0A%2Etooltip%3Anot%28%2Ebottom%29%3Aafter%20%7B%0Amargin%2Dbottom%3A%201rem%3B%0A%7D%0A%2Etooltip%2Ebottom%3Aafter%20%7B%0Amargin%2Dtop%3A%201rem%3B%0A%7D%0A" rel="stylesheet" />
-  <link href="data:text/css,%3Aroot%20%7B%0A%2D%2Dtoc%2Dwidth%3A%20300px%3B%0A%7D%0A%40media%20screen%20and%20%28min%2Dwidth%3A%20960px%29%20%7B%0Abody%20%7B%0Amax%2Dwidth%3A%20100vw%3B%0Amargin%3A%200%3B%0Apadding%3A%200%3B%0A%7D%0Amain%20%7B%0Adisplay%3A%20grid%3B%0Agrid%2Dtemplate%2Dcolumns%3A%20var%28%2D%2Dtoc%2Dwidth%29%201fr%3B%0Agrid%2Dtemplate%2Drows%3A%20auto%20auto%3B%0A%7D%0A%23TOC%20%7B%0Agrid%2Drow%3A%201%20%2F%20%2D1%3B%0Agrid%2Dcolumn%3A%201%20%2F%202%3B%0Aborder%3A%20none%3B%0Amargin%3A%200%3B%0Awidth%3A%20var%28%2D%2Dtoc%2Dwidth%29%3B%0A%7D%0A%23TOC%20%3E%20ul%20%7B%0Apadding%2Dtop%3A%200%3B%0Apadding%2Dbottom%3A%200%3B%0Aposition%3A%20sticky%3B%0Amax%2Dheight%3A%20100vh%3B%0Aoverflow%2Dy%3A%20auto%3B%0Atop%3A%200%3B%0Aborder%3A%20none%3B%0A%7D%0A%23TOC%20%3E%20ul%20%3E%20li%3Afirst%2Dchild%20%7B%0Apadding%2Dtop%3A%200%2E5rem%3B%0A%7D%0A%7D%0A%40media%20screen%20and%20%28min%2Dwidth%3A%20960px%29%20and%20%28max%2Dwidth%3A%201260px%29%20%7B%0Amain%20%7B%0Awidth%3A%20calc%28100vw%20%2D%202rem%29%3B%0A%7D%0Aheader%2C%20article%20%7B%0Awidth%3A%20calc%28100vw%20%2D%20var%28%2D%2Dtoc%2Dwidth%29%20%2D%206rem%29%3B%0Apadding%3A%200%200%200%204rem%3B%0A%7D%0A%7D%0A%40media%20screen%20and%20%28min%2Dwidth%3A%201260px%29%20%7B%0Amain%20%7B%0Awidth%3A%20calc%281260px%20%2D%202rem%29%3B%0Amargin%3A%200%20calc%2850vw%20%2D%20480px%29%200%20auto%3B%0A%7D%0Aheader%2C%20article%20%7B%0Awidth%3A%20calc%28960px%20%2D%206rem%29%3B%0Apadding%3A%200%200%200%204rem%3B%0A%7D%0A%7D%0A" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous" data-external="1">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous" data-external="1"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body);" data-external="1"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        displayMode: true
-      });
-    });
-  </script>
+pre.numberSource {
+margin: 0;
+padding-left: 0;
+}
+div.sourceCode {
+overflow: visible;
+}
+pre, pre.sourceCode {
+overflow-x: auto;
+}
+pre>code {
+white-space: pre;
+overflow: visible;
+background-color: unset;
+padding: 0;
+}
+pre.sourceCode.numberSource {
+overflow-x: visible;
+}
+pre.sourceCode.numberSource>code {
+white-space: pre-wrap
+}
+pre.sourceCode.numberSource>code>span {
+left: 8px;
+text-indent: -4.6em;
+}
+
+.chunk-summary {
+text-align: right;
+}
+.chunk-summary+pre,
+.chunk-summary+div.sourceCode {
+margin-top: 2px;
+}
+
+nav > ul {
+border: .0625rem solid #444;
+border-radius: 4px;
+margin: 5px;
+padding: 5px;
+}
+nav ul {
+list-style-type: none;
+padding-inline-start: 1rem;
+}
+nav ul li {
+padding: 0;
+}
+nav ul ul {
+margin-top: 0;
+margin-bottom: 0;
+padding-top: 0;
+padding-bottom: 0;
+}
+nav code {
+background-color: unset;
+color: unset;
+}
+</style>
 </head>
 <body>
-<main>
 <header id="title-block-header">
 <h1 class="title">tidyCpp Motivation</h1>
 <p class="author">Dirk Eddelbuettel</p>
 <p class="date">Initial version November 2020; Updated August 2021</p>
 </header>
-<nav id="TOC" role="doc-toc">
-<ul>
-<li><a href="#introducing-tidycpp">Introducing tidyCpp</a>
-<ul>
-<li><a href="#snippet-one-dimnames">Snippet One: dimnames</a></li>
-<li><a href="#snippet-two-convolution">Snippet Two: convolution</a></li>
-<li><a href="#snippet-three-uchardet">Snippet Three: uchardet</a></li>
-<li><a href="#snippet-four-rolling-min-and-max">Snippet Four: Rolling min and max</a></li>
-<li><a href="#protect-and-unprotect">PROTECT and UNPROTECT</a></li>
-<li><a href="#discussion">Discussion</a></li>
-<li><a href="#summary">Summary</a></li>
-</ul></li>
-</ul>
-</nav>
-<article>
-<section id="introducing-tidycpp" class="level2">
-<h2>Introducing tidyCpp</h2>
+<!--
+%\VignetteIndexEntry{tidyCpp Motivation}
+%\VignetteEngine{simplermarkdown::mdweave_to_html}
+%\VignetteEncoding{UTF-8}
+-->
+<h2 id="introducing-tidycpp">Introducing tidyCpp</h2>
 <p>The <code>tidyCpp</code> package offers a simple, small and clean C++ layer over the C API offered by R. As of version 0.0.4, it also adds a (truly minimal) numeric vector class for C++. This vignette highlights a few usage examples, often taken from the <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html"><em>Writing R Extensions</em> vignette that comes with R</a>, to highlight some features.</p>
 <p><code>tidyCpp</code> has no further dependencies on any other package. It can however be used with <a href="http://www.rcpp.org">Rcpp</a> simply to take advantage of its helper functions <code>cppFunction()</code> or <code>sourceCpp()</code>.</p>
 <p><code>tidyCpp</code> is still a fairly small package. Please free to contribute by make suggestions, or sending bugfixes or extension proposals.</p>
-<section id="snippet-one-dimnames" class="level3">
-<h3>Snippet One: dimnames</h3>
+<h3 id="snippet-one-dimnames">Snippet One: dimnames</h3>
 <p>This example comes from <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Attributes">Writing R Extension, Section 5.9.4</a> which highlights attribute setting from the C API.</p>
 <p>It takes two (named) numeric vectors, computes the outer product matrix and uses the names to set row- and column names. Note that we modified the existing example ever so slight by ensuring (as is frequently done) remapping of symbols. For example, <code>length</code> (which can clash easily with existing symbols in the global namespace) is now <code>Rf_length</code>. We also added an <code>export</code> tag for <code>Rcpp</code> simply to facilitate integration into R. No Rcpp header or data structures are used; we simply rely on its logic in getting C or C++ source into R.</p>
 <div class="columns">
 <div class="column" style="width:49.75%;">
-<section id="using-the-c-api-for-r" class="level4">
-<h4>Using the C API for R</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define R_NO_REMAP</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;R.h&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rinternals.h&gt;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>SEXP out<span class="op">(</span>SEXP x<span class="op">,</span> SEXP y<span class="op">)</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> nx <span class="op">=</span> Rf_length<span class="op">(</span>x<span class="op">),</span> ny <span class="op">=</span> Rf_length<span class="op">(</span>y<span class="op">);</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  SEXP ans <span class="op">=</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    PROTECT<span class="op">(</span>Rf_allocMatrix<span class="op">(</span>REALSXP<span class="op">,</span> nx<span class="op">,</span> ny<span class="op">));</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>rx <span class="op">=</span> REAL<span class="op">(</span>x<span class="op">),</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>ry <span class="op">=</span> REAL<span class="op">(</span>y<span class="op">),</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>rans <span class="op">=</span> REAL<span class="op">(</span>ans<span class="op">);</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> nx<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> tmp <span class="op">=</span> rx<span class="op">[</span>i<span class="op">];</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> ny<span class="op">;</span> j<span class="op">++)</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      rans<span class="op">[</span>i <span class="op">+</span> nx<span class="op">*</span>j<span class="op">]</span> <span class="op">=</span> tmp <span class="op">*</span> ry<span class="op">[</span>j<span class="op">];</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  SEXP dimnames <span class="op">=</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    PROTECT<span class="op">(</span>Rf_allocVector<span class="op">(</span>VECSXP<span class="op">,</span> <span class="dv">2</span><span class="op">));</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  SET_VECTOR_ELT<span class="op">(</span>dimnames<span class="op">,</span> <span class="dv">0</span><span class="op">,</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>                 Rf_getAttrib<span class="op">(</span>x<span class="op">,</span> R_NamesSymbol<span class="op">));</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  SET_VECTOR_ELT<span class="op">(</span>dimnames<span class="op">,</span> <span class="dv">1</span><span class="op">,</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>                 Rf_getAttrib<span class="op">(</span>y<span class="op">,</span> R_NamesSymbol<span class="op">));</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  Rf_setAttrib<span class="op">(</span>ans<span class="op">,</span> R_DimNamesSymbol<span class="op">,</span> dimnames<span class="op">);</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  UNPROTECT<span class="op">(</span><span class="dv">2</span><span class="op">);</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ans<span class="op">;</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-</section>
+<h4 id="using-the-c-api-for-r">Using the C API for R</h4>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="pp">#define R_NO_REMAP</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;R.h&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;Rinternals.h&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>SEXP out(SEXP x, SEXP y)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>{</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>  <span class="dt">int</span> nx = Rf_length(x), ny = Rf_length(y);</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>  SEXP ans =</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>    PROTECT(Rf_allocMatrix(REALSXP, nx, ny));</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>  <span class="dt">double</span> *rx = REAL(x),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a>    *ry = REAL(y),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a>    *rans = REAL(ans);</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nx; i++) {</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a>    <span class="dt">double</span> tmp = rx[i];</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; ny; j++)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a>      rans[i + nx*j] = tmp * ry[j];</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a>  }</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true"></a>  SEXP dimnames =</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true"></a>    PROTECT(Rf_allocVector(VECSXP, <span class="dv">2</span>));</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true"></a>  SET_VECTOR_ELT(dimnames, <span class="dv">0</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true"></a>                 Rf_getAttrib(x,R_NamesSymbol));</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true"></a>  SET_VECTOR_ELT(dimnames, <span class="dv">1</span>,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true"></a>                 Rf_getAttrib(y,R_NamesSymbol));</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true"></a>  Rf_setAttrib(ans, R_DimNamesSymbol, dimnames);</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true"></a>  UNPROTECT(<span class="dv">2</span>);</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true"></a>  <span class="cf">return</span> ans;</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true"></a>}</span></code></pre></div>
 </div><div class="column" style="width:0.5%;">
 <p> </p>
 </div><div class="column" style="width:49.75%;">
-<section id="using-tidycpp" class="level4">
-<h4>Using tidyCpp</h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::depends(tidyCpp)]]</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>SEXP out<span class="op">(</span>SEXP x<span class="op">,</span> SEXP y<span class="op">)</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> nx <span class="op">=</span> R<span class="op">::</span>length<span class="op">(</span>x<span class="op">),</span> ny <span class="op">=</span> R<span class="op">::</span>length<span class="op">(</span>y<span class="op">);</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  R<span class="op">::</span>Protect ans<span class="op">(</span>R<span class="op">::</span>allocMatrixReal<span class="op">(</span>nx<span class="op">,</span> ny<span class="op">));</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>rx <span class="op">=</span> R<span class="op">::</span>numericPointer<span class="op">(</span>x<span class="op">),</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>ry <span class="op">=</span> R<span class="op">::</span>numericPointer<span class="op">(</span>y<span class="op">),</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>rans <span class="op">=</span> R<span class="op">::</span>numericPointer<span class="op">(</span>ans<span class="op">);</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> nx<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> tmp <span class="op">=</span> rx<span class="op">[</span>i<span class="op">];</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> ny<span class="op">;</span> j<span class="op">++)</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      rans<span class="op">[</span>i <span class="op">+</span> nx<span class="op">*</span>j<span class="op">]</span> <span class="op">=</span> tmp <span class="op">*</span> ry<span class="op">[</span>j<span class="op">];</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  R<span class="op">::</span>Protect dimnames<span class="op">(</span>R<span class="op">::</span>allocVectorList<span class="op">(</span><span class="dv">2</span><span class="op">));</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  R<span class="op">::</span>setVectorElement<span class="op">(</span>dimnames<span class="op">,</span> <span class="dv">0</span><span class="op">,</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>                      R<span class="op">::</span>getNames<span class="op">(</span>x<span class="op">));</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  R<span class="op">::</span>setVectorElement<span class="op">(</span>dimnames<span class="op">,</span> <span class="dv">1</span><span class="op">,</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                      R<span class="op">::</span>getNames<span class="op">(</span>y<span class="op">));</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  R<span class="op">::</span>setDimNames<span class="op">(</span>ans<span class="op">,</span> dimnames<span class="op">);</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ans<span class="op">;</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-</section>
+<h4 id="using-tidycpp">Using tidyCpp</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="co">// [[Rcpp::depends(tidyCpp)]]</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>SEXP out(SEXP x, SEXP y)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>{</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>  <span class="dt">int</span> nx = R::length(x), ny = R::length(y);</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>  R::Protect ans(R::allocMatrixReal(nx, ny));</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>  <span class="dt">double</span> *rx = R::numericPointer(x),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>    *ry = R::numericPointer(y),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>    *rans = R::numericPointer(ans);</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nx; i++) {</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a>    <span class="dt">double</span> tmp = rx[i];</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; ny; j++)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true"></a>      rans[i + nx*j] = tmp * ry[j];</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true"></a>  }</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true"></a>  R::Protect dimnames(R::allocVectorList(<span class="dv">2</span>));</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true"></a>  R::setVectorElement(dimnames, <span class="dv">0</span>,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true"></a>                      R::getNames(x));</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true"></a>  R::setVectorElement(dimnames, <span class="dv">1</span>,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true"></a>                      R::getNames(y));</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true"></a>  R::setDimNames(ans, dimnames);</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true"></a>  <span class="cf">return</span> ans;</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
 </div>
 <p>Some key differences:</p>
@@ -221,373 +257,349 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>no macros are being used.</li>
 </ul>
 <p>Note that the use of <code>Rcpp::export</code> does not imply use of Rcpp data structures. We simply take advantaged of the tried and true code generation to make it easy to call the example from R. You can copy either example into a temporary file and use <code>Rcpp::sourceCpp(&quot;filenameHere&quot;)</code> on it to run the example.</p>
-</section>
-<section id="snippet-two-convolution" class="level3">
-<h3>Snippet Two: convolution</h3>
+<h3 id="snippet-two-convolution">Snippet Two: convolution</h3>
 <p>This example comes from <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Calling-_002eCall">Writing R Extension, Section 5.10.1</a> which introduces the <code>.Call()</code> interface of the C API for R.</p>
 <p>It takes two numeric vectors and computes a convolution. Note that as above we modified the existing example ever so slight by ensuring (as is frequently done) remapping of symbols, once again added an <code>export</code> tag for <code>Rcpp</code> simply to facilitate integration into R, and changing whitespace. No Rcpp header or data structures are used; we simply rely on its logic in getting C or C++ source into R.</p>
 <div class="columns">
 <div class="column" style="width:49.75%;">
-<section id="using-the-c-api-for-r-1" class="level4">
-<h4>Using the C API for R</h4>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define R_NO_REMAP</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;R.h&gt;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rinternals.h&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>SEXP convolve2<span class="op">(</span>SEXP a<span class="op">,</span> SEXP b<span class="op">)</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> na<span class="op">,</span> nb<span class="op">,</span> nab<span class="op">;</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>xa<span class="op">,</span> <span class="op">*</span>xb<span class="op">,</span> <span class="op">*</span>xab<span class="op">;</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  SEXP ab<span class="op">;</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  a <span class="op">=</span> PROTECT<span class="op">(</span>Rf_coerceVector<span class="op">(</span>a<span class="op">,</span> REALSXP<span class="op">));</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  b <span class="op">=</span> PROTECT<span class="op">(</span>Rf_coerceVector<span class="op">(</span>b<span class="op">,</span> REALSXP<span class="op">));</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  na <span class="op">=</span> Rf_length<span class="op">(</span>a<span class="op">);</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  nb <span class="op">=</span> Rf_length<span class="op">(</span>b<span class="op">);</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  nab <span class="op">=</span> na <span class="op">+</span> nb <span class="op">-</span> <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  ab <span class="op">=</span> PROTECT<span class="op">(</span>Rf_allocVector<span class="op">(</span>REALSXP<span class="op">,</span> nab<span class="op">));</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  xa <span class="op">=</span> REAL<span class="op">(</span>a<span class="op">);</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  xb <span class="op">=</span> REAL<span class="op">(</span>b<span class="op">);</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  xab <span class="op">=</span> REAL<span class="op">(</span>ab<span class="op">);</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> nab<span class="op">;</span> i<span class="op">++)</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    xab<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="fl">0.0</span><span class="op">;</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> na<span class="op">;</span> i<span class="op">++)</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> nb<span class="op">;</span> j<span class="op">++)</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>      xab<span class="op">[</span>i <span class="op">+</span> j<span class="op">]</span> <span class="op">+=</span> xa<span class="op">[</span>i<span class="op">]</span> <span class="op">*</span> xb<span class="op">[</span>j<span class="op">];</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  UNPROTECT<span class="op">(</span><span class="dv">3</span><span class="op">);</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ab<span class="op">;</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-</section>
+<h4 id="using-the-c-api-for-r-1">Using the C API for R</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="pp">#define R_NO_REMAP</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;R.h&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;Rinternals.h&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>SEXP convolve2(SEXP a, SEXP b)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>{</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>  <span class="dt">int</span> na, nb, nab;</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>  <span class="dt">double</span> *xa, *xb, *xab;</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>  SEXP ab;</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a>  a = PROTECT(Rf_coerceVector(a, REALSXP));</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>  b = PROTECT(Rf_coerceVector(b, REALSXP));</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>  na = Rf_length(a);</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>  nb = Rf_length(b);</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a>  nab = na + nb - <span class="dv">1</span>;</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a>  ab = PROTECT(Rf_allocVector(REALSXP, nab));</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a>  xa = REAL(a);</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true"></a>  xb = REAL(b);</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true"></a>  xab = REAL(ab);</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nab; i++)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true"></a>    xab[i] = <span class="fl">0.0</span>;</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; na; i++)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; nb; j++)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true"></a>      xab[i + j] += xa[i] * xb[j];</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true"></a>  UNPROTECT(<span class="dv">3</span>);</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true"></a>  <span class="cf">return</span> ab;</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true"></a>}</span></code></pre></div>
 </div><div class="column" style="width:0.5%;">
 <p> </p>
 </div><div class="column" style="width:49.75%;">
-<section id="using-tidycpp-1" class="level4">
-<h4>Using tidyCpp</h4>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::depends(tidyCpp)]]</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>SEXP convolve2<span class="op">(</span>SEXP a<span class="op">,</span> SEXP b<span class="op">)</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> na<span class="op">,</span> nb<span class="op">,</span> nab<span class="op">;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> <span class="op">*</span>xa<span class="op">,</span> <span class="op">*</span>xb<span class="op">,</span> <span class="op">*</span>xab<span class="op">;</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  R<span class="op">::</span>Protect pa<span class="op">(</span>R<span class="op">::</span>coerceVectorNumeric<span class="op">(</span>a<span class="op">));</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  R<span class="op">::</span>Protect pb<span class="op">(</span>R<span class="op">::</span>coerceVectorNumeric<span class="op">(</span>b<span class="op">));</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  na <span class="op">=</span> R<span class="op">::</span>length<span class="op">(</span>pa<span class="op">);</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  nb <span class="op">=</span> R<span class="op">::</span>length<span class="op">(</span>pb<span class="op">);</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  nab <span class="op">=</span> na <span class="op">+</span> nb <span class="op">-</span> <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  R<span class="op">::</span>Protect ab<span class="op">(</span>R<span class="op">::</span>allocVectorNumeric<span class="op">(</span>nab<span class="op">));</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  xa <span class="op">=</span> R<span class="op">::</span>numericPointer<span class="op">(</span>pa<span class="op">);</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  xb <span class="op">=</span> R<span class="op">::</span>numericPointer<span class="op">(</span>pb<span class="op">);</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  xab <span class="op">=</span> R<span class="op">::</span>numericPointer<span class="op">(</span>ab<span class="op">);</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> nab<span class="op">;</span> i<span class="op">++)</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    xab<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="fl">0.0</span><span class="op">;</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> na<span class="op">;</span> i<span class="op">++)</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> nb<span class="op">;</span> j<span class="op">++)</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>      xab<span class="op">[</span>i <span class="op">+</span> j<span class="op">]</span> <span class="op">+=</span> xa<span class="op">[</span>i<span class="op">]</span> <span class="op">*</span> xb<span class="op">[</span>j<span class="op">];</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ab<span class="op">;</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-</section>
+<h4 id="using-tidycpp-1">Using tidyCpp</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="co">// [[Rcpp::depends(tidyCpp)]]</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>SEXP convolve2(SEXP a, SEXP b)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>{</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a>  <span class="dt">int</span> na, nb, nab;</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a>  <span class="dt">double</span> *xa, *xb, *xab;</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>  R::Protect pa(R::coerceVectorNumeric(a));</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a>  R::Protect pb(R::coerceVectorNumeric(b));</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true"></a>  na = R::length(pa);</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true"></a>  nb = R::length(pb);</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true"></a>  nab = na + nb - <span class="dv">1</span>;</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true"></a>  R::Protect ab(R::allocVectorNumeric(nab));</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true"></a>  xa = R::numericPointer(pa);</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true"></a>  xb = R::numericPointer(pb);</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true"></a>  xab = R::numericPointer(ab);</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; nab; i++)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true"></a>    xab[i] = <span class="fl">0.0</span>;</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true"></a>  <span class="cf">for</span>(<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; na; i++)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true"></a>    <span class="cf">for</span>(<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; nb; j++)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true"></a>      xab[i + j] += xa[i] * xb[j];</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true"></a>  <span class="cf">return</span> ab;</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
 </div>
 <p>Like the previous example, the new version operates without macros, does not require manual counting in <code>PROTECT</code> and <code>UNPROTECT</code> and is, to our eyes, a little more readable.</p>
 <p>As the existing example from <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Calling-_002eCall">Writing R Extension, Section 5.10.1</a> used <code>PROTECT</code> on the two incoming <code>SEXP</code> objects (whereas the previous example, from the same source, does not) we need to allocate two tempary objects <code>pa</code> and <code>pb</code> with the explicit C++ ownership providing the protect and unprotect pairing. Because <code>pa</code> and <code>pb</code> go out of scope at the end of the function, the destructor will then unprotect correctly.</p>
 <p>(And as above, the two ‘tags’ for Rcpp use are present only to facilitate use via the <code>Rcpp::sourceCpp()</code> package.)</p>
-</section>
-<section id="snippet-three-uchardet" class="level3">
-<h3>Snippet Three: uchardet</h3>
+<h3 id="snippet-three-uchardet">Snippet Three: uchardet</h3>
 <p>For the third example, we use an unrelated package: <a href="https://cran.r-project.org/package=uchardet">uchardet</a> which provides R bindings to the eponymous C++ library to detect character encodings. This example cannot be sourced simply into R as it requires the underlying C++ library. One can, however, download the R package and then replace the file <code>src/detect.cpp</code> with the content below, and add <code>LinkingTo: tidyCpp</code> to the <code>DESCRIPTION</code> file.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;R_ext/Visibility.h&gt;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;fstream&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;uchardet.h&gt;</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="pp">#define BUFFER_SIZE </span><span class="dv">65536</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> buffer<span class="op">[</span>BUFFER_SIZE<span class="op">];</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>SEXP attribute_hidden get_charset<span class="op">(</span><span class="dt">uchardet_t</span> handle<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">char</span><span class="op">*</span> ans <span class="op">=</span> uchardet_get_charset<span class="op">(</span>handle<span class="op">);</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>strlen<span class="op">(</span>ans<span class="op">)</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Rf_warning(&quot;Can not detect encoding.&quot;);</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> NA_STRING<span class="op">;</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> R<span class="op">::</span>mkChar<span class="op">(</span>ans<span class="op">);</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>SEXP attribute_hidden do_detect_sexp<span class="op">(</span>SEXP x<span class="op">,</span> <span class="dt">uchardet_t</span> handle<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">R_xlen_t</span> x_len <span class="op">=</span> R<span class="op">::</span>xlength<span class="op">(</span>x<span class="op">);</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>x_len <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> NA_STRING<span class="op">;</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">char</span><span class="op">*</span> x_data<span class="op">;</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">switch</span><span class="op">(</span>R<span class="op">::</span>Typeof<span class="op">(</span>x<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> CHARSXP<span class="op">:</span> <span class="op">{</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> <span class="op">(</span>x <span class="op">==</span> NA_STRING<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> NA_STRING<span class="op">;</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>      x_data <span class="op">=</span> R<span class="op">::</span>charPointer<span class="op">(</span>x<span class="op">);</span></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>      <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> RAWSXP<span class="op">:</span> <span class="op">{</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>      x_data <span class="op">=</span> <span class="op">(</span><span class="at">const</span> <span class="dt">char</span><span class="op">*)</span> R<span class="op">::</span>rawPointer<span class="op">(</span>x<span class="op">);</span></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>      <span class="cf">break</span><span class="op">;</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">default</span><span class="op">:</span> <span class="op">{</span></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>      R<span class="op">::</span>warning<span class="op">(</span><span class="st">&quot;Unsupported data type &#39;</span><span class="sc">%s</span><span class="st">&#39;.&quot;</span><span class="op">,</span> R<span class="op">::</span>type2char<span class="op">(</span>R<span class="op">::</span>Typeof<span class="op">(</span>x<span class="op">)));</span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> NA_STRING<span class="op">;</span></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> retval <span class="op">=</span> uchardet_handle_data<span class="op">(</span>handle<span class="op">,</span> x_data<span class="op">,</span> x_len<span class="op">);</span></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  uchardet_data_end<span class="op">(</span>handle<span class="op">);</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>retval <span class="op">!=</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Rf_warning(&quot;Can not handling data.&quot;);</span></span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> NA_STRING<span class="op">;</span></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> get_charset<span class="op">(</span>handle<span class="op">);</span></span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>SEXP attribute_hidden do_detect_file<span class="op">(</span>SEXP x<span class="op">,</span> <span class="dt">uchardet_t</span> handle<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>x <span class="op">==</span> NA_STRING<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> NA_STRING<span class="op">;</span></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">char</span><span class="op">*</span> fname <span class="op">=</span> R<span class="op">::</span>charPointer<span class="op">(</span>x<span class="op">);</span></span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>ifstream<span class="op"> </span>fs<span class="op">(</span>R_ExpandFileName<span class="op">(</span>fname<span class="op">),</span> <span class="bu">std::</span>ios<span class="bu">::</span>binary<span class="op">);</span></span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(!</span>fs<span class="op">.</span>is_open<span class="op">())</span> <span class="op">{</span></span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>    R<span class="op">::</span>warning<span class="op">(</span><span class="st">&quot;Can not open file &#39;</span><span class="sc">%s</span><span class="st">&#39;.&quot;</span><span class="op">,</span> fname<span class="op">);</span></span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> NA_STRING<span class="op">;</span></span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> <span class="op">(!</span>fs<span class="op">.</span>eof<span class="op">())</span> <span class="op">{</span></span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>    fs<span class="op">.</span>read<span class="op">(</span>buffer<span class="op">,</span> BUFFER_SIZE<span class="op">);</span></span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>size_t<span class="op"> </span>len <span class="op">=</span> fs<span class="op">.</span>gcount<span class="op">();</span></span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>    uchardet_handle_data<span class="op">(</span>handle<span class="op">,</span> buffer<span class="op">,</span> len<span class="op">);</span></span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>  uchardet_data_end<span class="op">(</span>handle<span class="op">);</span></span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>  fs<span class="op">.</span>close<span class="op">();</span></span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> get_charset<span class="op">(</span>handle<span class="op">);</span></span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>SEXP attribute_hidden do_detect_vec<span class="op">(</span>SEXP x<span class="op">,</span> T fun<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>R<span class="op">::</span>Typeof<span class="op">(</span>x<span class="op">)</span> <span class="op">!=</span> STRSXP<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>    R<span class="op">::</span>error<span class="op">(</span><span class="st">&quot;&#39;x&#39; must be character vector.&quot;</span><span class="op">);</span></span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>  <span class="dt">R_xlen_t</span> n <span class="op">=</span> R<span class="op">::</span>xlength<span class="op">(</span>x<span class="op">);</span></span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>  R<span class="op">::</span>Protect res<span class="op">(</span>R<span class="op">::</span>allocVectorCharacter<span class="op">(</span>n<span class="op">));</span></span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>  <span class="dt">uchardet_t</span> handle <span class="op">=</span> uchardet_new<span class="op">();</span></span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">R_len_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>    R<span class="op">::</span>setStringElement<span class="op">(</span>res<span class="op">,</span> i<span class="op">,</span> fun<span class="op">(</span>R<span class="op">::</span>stringElement<span class="op">(</span>x<span class="op">,</span> i<span class="op">),</span> handle<span class="op">));</span></span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>    uchardet_reset<span class="op">(</span>handle<span class="op">);</span></span>
-<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>  uchardet_delete<span class="op">(</span>handle<span class="op">);</span></span>
-<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> res<span class="op">;</span></span>
-<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>SEXP detect_character<span class="op">(</span>SEXP x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> do_detect_vec<span class="op">(</span>x<span class="op">,</span> do_detect_sexp<span class="op">);</span></span>
-<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>SEXP detect_file<span class="op">(</span>SEXP x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> do_detect_vec<span class="op">(</span>x<span class="op">,</span> do_detect_file<span class="op">);</span></span>
-<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>SEXP detect_raw<span class="op">(</span>SEXP x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>R<span class="op">::</span>Typeof<span class="op">(</span>x<span class="op">)</span> <span class="op">!=</span> RAWSXP<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>    R<span class="op">::</span>error<span class="op">(</span><span class="st">&quot;&#39;x&#39; must be raw vector.&quot;</span><span class="op">);</span></span>
-<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>  R<span class="op">::</span>Protect res<span class="op">(</span>R<span class="op">::</span>allocVectorCharacter<span class="op">(</span><span class="dv">1</span><span class="op">));</span></span>
-<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>  <span class="dt">uchardet_t</span> handle <span class="op">=</span> uchardet_new<span class="op">();</span></span>
-<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>  R<span class="op">::</span>setStringElement<span class="op">(</span>res<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> do_detect_sexp<span class="op">(</span>x<span class="op">,</span> handle<span class="op">));</span></span>
-<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>  uchardet_delete<span class="op">(</span>handle<span class="op">);</span></span>
-<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> res<span class="op">;</span></span>
-<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-</section>
-<section id="snippet-four-rolling-min-and-max" class="level3">
-<h3>Snippet Four: Rolling min and max</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;R_ext/Visibility.h&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;fstream&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;uchardet.h&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a><span class="pp">#define BUFFER_SIZE </span><span class="dv">65536</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a><span class="dt">char</span> buffer[BUFFER_SIZE];</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a>SEXP attribute_hidden get_charset(<span class="dt">uchardet_t</span> handle) {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a>  <span class="at">const</span> <span class="dt">char</span>* ans = uchardet_get_charset(handle);</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a>  <span class="cf">if</span> (strlen(ans) == <span class="dv">0</span>) {</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a>    <span class="co">// Rf_warning(&quot;Can not detect encoding.&quot;);</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true"></a>    <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true"></a>  }</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true"></a>  <span class="cf">return</span> R::mkChar(ans);</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true"></a>}</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true"></a>SEXP attribute_hidden do_detect_sexp(SEXP x, <span class="dt">uchardet_t</span> handle) {</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true"></a>  <span class="dt">R_xlen_t</span> x_len = R::xlength(x);</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true"></a>  <span class="cf">if</span> (x_len == <span class="dv">0</span>) {</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true"></a>    <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true"></a>  }</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true"></a>  <span class="at">const</span> <span class="dt">char</span>* x_data;</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true"></a>  <span class="cf">switch</span>(R::Typeof(x)) {</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true"></a>    <span class="cf">case</span> CHARSXP: {</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true"></a>      <span class="cf">if</span> (x == NA_STRING) {</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true"></a>        <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true"></a>      }</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true"></a>      x_data = R::charPointer(x);</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true"></a>      <span class="cf">break</span>;</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true"></a>    }</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true"></a>    <span class="cf">case</span> RAWSXP: {</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true"></a>      x_data = (<span class="at">const</span> <span class="dt">char</span>*) R::rawPointer(x);</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true"></a>      <span class="cf">break</span>;</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true"></a>    }</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true"></a>    <span class="cf">default</span>: {</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true"></a>      R::warning(<span class="st">&quot;Unsupported data type &#39;</span><span class="sc">%s</span><span class="st">&#39;.&quot;</span>, R::type2char(R::Typeof(x)));</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true"></a>      <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true"></a>    }</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true"></a>  }</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true"></a>  <span class="dt">int</span> retval = uchardet_handle_data(handle, x_data, x_len);</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true"></a>  uchardet_data_end(handle);</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true"></a>  <span class="cf">if</span> (retval != <span class="dv">0</span>) {</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true"></a>    <span class="co">// Rf_warning(&quot;Can not handling data.&quot;);</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true"></a>    <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true"></a>  }</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true"></a>  <span class="cf">return</span> get_charset(handle);</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true"></a>}</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true"></a></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true"></a>SEXP attribute_hidden do_detect_file(SEXP x, <span class="dt">uchardet_t</span> handle) {</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true"></a>  <span class="cf">if</span> (x == NA_STRING) {</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true"></a>    <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true"></a>  }</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true"></a></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true"></a>  <span class="at">const</span> <span class="dt">char</span>* fname = R::charPointer(x);</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true"></a>  <span class="bu">std::</span>ifstream fs(R_ExpandFileName(fname), <span class="bu">std::</span>ios<span class="bu">::</span>binary);</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true"></a>  <span class="cf">if</span> (!fs.is_open()) {</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true"></a>    R::warning(<span class="st">&quot;Can not open file &#39;</span><span class="sc">%s</span><span class="st">&#39;.&quot;</span>, fname);</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true"></a>    <span class="cf">return</span> NA_STRING;</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true"></a>  }</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true"></a></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true"></a>  <span class="cf">while</span> (!fs.eof()) {</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true"></a>    fs.read(buffer, BUFFER_SIZE);</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true"></a>    <span class="bu">std::</span>size_t len = fs.gcount();</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true"></a>    uchardet_handle_data(handle, buffer, len);</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true"></a>  }</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true"></a>  uchardet_data_end(handle);</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true"></a>  fs.close();</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true"></a></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true"></a>  <span class="cf">return</span> get_charset(handle);</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true"></a>}</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true"></a></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true"></a><span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true"></a>SEXP attribute_hidden do_detect_vec(SEXP x, T fun) {</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true"></a>  <span class="cf">if</span> (R::Typeof(x) != STRSXP) {</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true"></a>    R::error(<span class="st">&quot;&#39;x&#39; must be character vector.&quot;</span>);</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true"></a>  }</span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true"></a>  <span class="dt">R_xlen_t</span> n = R::xlength(x);</span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true"></a>  R::Protect res(R::allocVectorCharacter(n));</span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true"></a>  <span class="dt">uchardet_t</span> handle = uchardet_new();</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true"></a>  <span class="cf">for</span> (<span class="dt">R_len_t</span> i = <span class="dv">0</span>; i &lt; n; ++i) {</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true"></a>    R::setStringElement(res, i, fun(R::stringElement(x, i), handle));</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true"></a>    uchardet_reset(handle);</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true"></a>  }</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true"></a>  uchardet_delete(handle);</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true"></a>  <span class="cf">return</span> res;</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true"></a>}</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true"></a></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true"></a>SEXP detect_character(SEXP x) {</span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true"></a>  <span class="cf">return</span> do_detect_vec(x, do_detect_sexp);</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true"></a>}</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true"></a></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true"></a>SEXP detect_file(SEXP x) {</span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true"></a>  <span class="cf">return</span> do_detect_vec(x, do_detect_file);</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true"></a>}</span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true"></a></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true"></a>SEXP detect_raw(SEXP x) {</span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true"></a>  <span class="cf">if</span> (R::Typeof(x) != RAWSXP) {</span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true"></a>    R::error(<span class="st">&quot;&#39;x&#39; must be raw vector.&quot;</span>);</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true"></a>  }</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true"></a>  R::Protect res(R::allocVectorCharacter(<span class="dv">1</span>));</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true"></a>  <span class="dt">uchardet_t</span> handle = uchardet_new();</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true"></a>  R::setStringElement(res, <span class="dv">0</span>, do_detect_sexp(x, handle));</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true"></a>  uchardet_delete(handle);</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true"></a>  <span class="cf">return</span> res;</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true"></a>}</span></code></pre></div>
+<h3 id="snippet-four-rolling-min-and-max">Snippet Four: Rolling min and max</h3>
 <p>For the fourth example, we modified a function from an older version of package <a href="https://cran.r-project.org/package=uchardet">ichimoku</a>. It implements a rolling minimum and maximum operator (in an earlier version of the package, see <em>e.g.</em> <a href="https://github.com/shikokuchuo/ichimoku/blob/6462c5ee65642f8018bd51ae529499c705a15c95/src/windowfns.cpp">for the file</a>. Its use of Rcpp is fairly standard, however the package chose to make changes based on the compilation time so we took a look too. The version below deploys <code>tidyCpp</code> and its new <code>numvec</code> header and class instead (and we tested this in a local fork of the package).</p>
 <p>To make the code fit in the dual display below, we added linebreaks on the left, and adjusted whitespace. Our code on the right also slightly changes the interface by simplyfing the implementation: without the <code>enum</code> and <code>struct Args</code> and dual callers, we add a third argument to determine whether we operate as min or max which saves the two extra functions at the bottom. We also altered whitespace away from our preferred use of four spaces; see the original function (also containing full copyright headers and more) <a href="https://github.com/eddelbuettel/dang/blob/master/src/rollMinMax.cpp">here</a>.</p>
 <p>The key point, however, is immediately apparent. The two version are essentially identical (though the Rcpp version will have more type checks, exception handling, wrapper generation and all the other reasons why often use Rcpp).</p>
 <div class="columns">
 <div class="column" style="width:49.75%;">
-<section id="using-the-rcpp-version" class="level4">
-<h4>Using the Rcpp version</h4>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;deque&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;utility&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">// types of calculations</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> CalcType <span class="op">{</span>MIN<span class="op">,</span> MAX<span class="op">};</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">// function arguments for non-data</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Args <span class="op">{</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> window<span class="op">;</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  CalcType ctype<span class="op">;</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">// calculates rolling window for {min, max}</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>NumericVector roll_minmax<span class="op">(</span><span class="at">const</span> NumericVector<span class="op">&amp;</span> x<span class="op">,</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>                          Args a<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n  <span class="op">=</span> x<span class="op">.</span>length<span class="op">();</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  NumericVector rollx<span class="op">(</span>n<span class="op">);</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>deque<span class="op">&lt;</span><span class="bu">std::</span>pair<span class="op">&lt;</span><span class="dt">long</span> <span class="dt">double</span><span class="op">,</span> <span class="dt">int</span><span class="op">&gt;&gt;</span> deck<span class="op">;</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> x<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span><span class="op">(</span>a<span class="op">.</span>ctype <span class="op">==</span> MIN<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>      <span class="cf">while</span> <span class="op">(!</span>deck<span class="op">.</span>empty<span class="op">()</span> <span class="op">&amp;&amp;</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>             deck<span class="op">.</span>back<span class="op">().</span>first <span class="op">&gt;=</span> x<span class="op">[</span>i<span class="op">])</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        deck<span class="op">.</span>pop_back<span class="op">();</span></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>      <span class="cf">while</span> <span class="op">(!</span>deck<span class="op">.</span>empty<span class="op">()</span> <span class="op">&amp;&amp;</span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>             deck<span class="op">.</span>back<span class="op">().</span>first <span class="op">&lt;=</span> x<span class="op">[</span>i<span class="op">])</span></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        deck<span class="op">.</span>pop_back<span class="op">();</span></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    deck<span class="op">.</span>push_back<span class="op">(</span><span class="bu">std::</span>make_pair<span class="op">(</span>x<span class="op">[</span>i<span class="op">],</span> i<span class="op">));</span></span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span><span class="op">(</span>deck<span class="op">.</span>front<span class="op">().</span>second <span class="op">&lt;=</span> i <span class="op">-</span> a<span class="op">.</span>window<span class="op">)</span></span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>      deck<span class="op">.</span>pop_front<span class="op">();</span></span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> <span class="dt">double</span> min <span class="op">=</span> deck<span class="op">.</span>front<span class="op">().</span>first<span class="op">;</span></span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>i <span class="op">&lt;</span> a<span class="op">.</span>window <span class="op">-</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>      rollx<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> NA_REAL<span class="op">;</span></span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>      rollx<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> min<span class="op">;</span></span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> rollx<span class="op">;</span></span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>NumericVector maxOver<span class="op">(</span><span class="at">const</span> SEXP<span class="op">&amp;</span> x<span class="op">,</span></span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>                      <span class="dt">int</span> window<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>  Args a<span class="op">;</span></span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>  a<span class="op">.</span>window <span class="op">=</span> window<span class="op">;</span></span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>  a<span class="op">.</span>ctype <span class="op">=</span> MAX<span class="op">;</span></span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> roll_minmax<span class="op">(</span>x<span class="op">,</span> a<span class="op">);</span></span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>NumericVector minOver<span class="op">(</span><span class="at">const</span> SEXP<span class="op">&amp;</span> x<span class="op">,</span></span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>                      <span class="dt">int</span> window<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>  Args a<span class="op">;</span></span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>  a<span class="op">.</span>window <span class="op">=</span> window<span class="op">;</span></span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>  a<span class="op">.</span>ctype <span class="op">=</span> MIN<span class="op">;</span></span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> roll_minmax<span class="op">(</span>x<span class="op">,</span> a<span class="op">);</span></span>
-<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-</section>
+<h4 id="using-the-rcpp-version">Using the Rcpp version</h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;deque&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;utility&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp;</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a><span class="co">// types of calculations</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a><span class="kw">enum</span> CalcType {MIN, MAX};</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a><span class="co">// function arguments for non-data</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a><span class="kw">struct</span> Args {</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a>  <span class="dt">int</span> window;</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a>  CalcType ctype;</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true"></a>};</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true"></a><span class="co">// calculates rolling window for {min, max}</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true"></a>NumericVector</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true"></a>roll_minmax(<span class="at">const</span> NumericVector&amp; x, Args a) {</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true"></a>  <span class="dt">int</span> n  = x.length();</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true"></a>  NumericVector rollx(n);</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true"></a>  <span class="bu">std::</span>deque&lt;<span class="bu">std::</span>pair&lt;<span class="dt">long</span> <span class="dt">double</span>, <span class="dt">int</span>&gt;&gt; deck;</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true"></a>  <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; x.size(); ++i) {</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true"></a>    <span class="cf">if</span>(a.ctype == MIN) {</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true"></a>      <span class="cf">while</span> (!deck.empty() &amp;&amp;</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true"></a>             deck.back().first &gt;= x[i])</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true"></a>        deck.pop_back();</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true"></a>    } <span class="cf">else</span> {</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true"></a>      <span class="cf">while</span> (!deck.empty() &amp;&amp;</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true"></a>             deck.back().first &lt;= x[i])</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true"></a>        deck.pop_back();</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true"></a>    }</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true"></a>    deck.push_back(<span class="bu">std::</span>make_pair(x[i], i));</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true"></a></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true"></a>    <span class="cf">while</span>(deck.front().second &lt;= i - a.window)</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true"></a>      deck.pop_front();</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true"></a></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true"></a>    <span class="dt">long</span> <span class="dt">double</span> min = deck.front().first;</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true"></a>    <span class="cf">if</span> (i &lt; a.window - <span class="dv">1</span>) {</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true"></a>      rollx[i] = NA_REAL;</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true"></a>    } <span class="cf">else</span> {</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true"></a>      rollx[i] = min;</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true"></a>    }</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true"></a>  }</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true"></a>  <span class="cf">return</span> rollx;</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true"></a>}</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true"></a></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true"></a>NumericVector maxOver(<span class="at">const</span> SEXP&amp; x,</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true"></a>                      <span class="dt">int</span> window) {</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true"></a>  Args a;</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true"></a>  a.window = window;</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true"></a>  a.ctype = MAX;</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true"></a>  <span class="cf">return</span> roll_minmax(x, a);</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true"></a>}</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true"></a></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true"></a>NumericVector minOver(<span class="at">const</span> SEXP&amp; x,</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true"></a>                      <span class="dt">int</span> window) {</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true"></a>  Args a;</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true"></a>  a.window = window;</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true"></a>  a.ctype = MIN;</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true"></a>  <span class="cf">return</span> roll_minmax(x, a);</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true"></a>}</span></code></pre></div>
 </div><div class="column" style="width:0.5%;">
 <p> </p>
 </div><div class="column" style="width:49.75%;">
-<section id="using-tidycpp-2" class="level4">
-<h4>Using tidyCpp</h4>
-<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;deque&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;utility&gt;</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> <span class="st">&quot;C&quot;</span> <span class="op">{</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">// forward declaration</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>tidy<span class="op">::</span>NumVec rollMinMax<span class="op">(</span>tidy<span class="op">::</span>NumVec x<span class="op">,</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">int</span> window<span class="op">,</span> <span class="dt">bool</span> isMin<span class="op">);</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">// this SEXP variant is referenced from init.c</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>SEXP _rollMinMax<span class="op">(</span>SEXP x<span class="op">,</span>SEXP window<span class="op">,</span>SEXP isMin<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> rollMinMax<span class="op">(</span>x<span class="op">,</span> R<span class="op">::</span>asInteger<span class="op">(</span>window<span class="op">),</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                    R<span class="op">::</span>asLogical<span class="op">(</span>isMin<span class="op">)));</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">// Calculates rolling window for {min, max}</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>tidy<span class="op">::</span>NumVec rollMinMax<span class="op">(</span>tidy<span class="op">::</span>NumVec x<span class="op">,</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">int</span> window<span class="op">,</span> <span class="dt">bool</span> isMin<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n  <span class="op">=</span> R<span class="op">::</span>length<span class="op">(</span>x<span class="op">);</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  tidy<span class="op">::</span>NumVec rollx<span class="op">(</span>n<span class="op">);</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>deque<span class="op">&lt;</span><span class="bu">std::</span>pair<span class="op">&lt;</span><span class="dt">long</span> <span class="dt">double</span><span class="op">,</span> <span class="dt">int</span><span class="op">&gt;&gt;</span> deck<span class="op">;</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>isMin<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>      <span class="cf">while</span> <span class="op">(!</span>deck<span class="op">.</span>empty<span class="op">()</span> <span class="op">&amp;&amp;</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>             deck<span class="op">.</span>back<span class="op">().</span>first <span class="op">&gt;=</span> x<span class="op">[</span>i<span class="op">])</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        deck<span class="op">.</span>pop_back<span class="op">();</span></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>      <span class="cf">while</span> <span class="op">(!</span>deck<span class="op">.</span>empty<span class="op">()</span> <span class="op">&amp;&amp;</span></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>             deck<span class="op">.</span>back<span class="op">().</span>first <span class="op">&lt;=</span> x<span class="op">[</span>i<span class="op">])</span></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        deck<span class="op">.</span>pop_back<span class="op">();</span></span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    deck<span class="op">.</span>push_back<span class="op">(</span><span class="bu">std::</span>make_pair<span class="op">(</span>x<span class="op">[</span>i<span class="op">],</span> i<span class="op">));</span></span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span><span class="op">(</span>deck<span class="op">.</span>front<span class="op">().</span>second <span class="op">&lt;=</span> i <span class="op">-</span> window<span class="op">)</span></span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>      deck<span class="op">.</span>pop_front<span class="op">();</span></span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> <span class="dt">double</span> min <span class="op">=</span> deck<span class="op">.</span>front<span class="op">().</span>first<span class="op">;</span></span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>i <span class="op">&lt;</span> window <span class="op">-</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>      rollx<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> NA_REAL<span class="op">;</span></span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>      rollx<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> min<span class="op">;</span></span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> rollx<span class="op">;</span></span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="co">// extern &quot;C&quot;</span></span></code></pre></div>
-</section>
+<h4 id="using-tidycpp-2">Using tidyCpp</h4>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;deque&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;utility&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a><span class="pp">#include </span><span class="im">&lt;tidyCpp&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a><span class="at">extern</span> <span class="st">&quot;C&quot;</span> {</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a><span class="co">// forward declaration</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a>tidy::NumVec rollMinMax(tidy::NumVec x,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a>                        <span class="dt">int</span> window, <span class="dt">bool</span> isMin);</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a><span class="co">// this SEXP variant is referenced from init.c</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a>SEXP _rollMinMax(SEXP x, SEXP win, SEXP isMin){</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a>  <span class="cf">return</span> rollMinMax(x, R::asInteger(win),</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true"></a>                    R::asLogical(isMin)));</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true"></a>}</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true"></a><span class="co">// Calculates rolling window for {min, max}</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true"></a>tidy::NumVec</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true"></a>rollMinMax(tidy::NumVec x, <span class="dt">int</span> win, <span class="dt">bool</span> isMin){</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true"></a>  <span class="dt">int</span> n  = R::length(x);</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true"></a>  tidy::NumVec rollx(n);</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true"></a>  <span class="bu">std::</span>deque&lt;<span class="bu">std::</span>pair&lt;<span class="dt">long</span> <span class="dt">double</span>, <span class="dt">int</span>&gt;&gt; deck;</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true"></a>  <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; n; ++i) {</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true"></a>    <span class="cf">if</span> (isMin) {</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true"></a>      <span class="cf">while</span> (!deck.empty() &amp;&amp;</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true"></a>             deck.back().first &gt;= x[i])</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true"></a>        deck.pop_back();</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true"></a>    } <span class="cf">else</span> {</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true"></a>      <span class="cf">while</span> (!deck.empty() &amp;&amp;</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true"></a>             deck.back().first &lt;= x[i])</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true"></a>        deck.pop_back();</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true"></a>    }</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true"></a>    deck.push_back(<span class="bu">std::</span>make_pair(x[i], i));</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true"></a></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true"></a>    <span class="cf">while</span>(deck.front().second &lt;= i - win)</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true"></a>      deck.pop_front();</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true"></a></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true"></a>    <span class="dt">long</span> <span class="dt">double</span> min = deck.front().first;</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true"></a>    <span class="cf">if</span> (i &lt; win - <span class="dv">1</span>) {</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true"></a>      rollx[i] = NA_REAL;</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true"></a>    } <span class="cf">else</span> {</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true"></a>      rollx[i] = min;</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true"></a>    }</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true"></a>  }</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true"></a>  <span class="cf">return</span> rollx;</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true"></a>}</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true"></a></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true"></a>} <span class="co">// extern &quot;C&quot;</span></span></code></pre></div>
 </div>
 </div>
-</section>
-<section id="protect-and-unprotect" class="level3">
-<h3>PROTECT and UNPROTECT</h3>
+<h3 id="protect-and-unprotect">PROTECT and UNPROTECT</h3>
 <p>The <code>R::Protect()</code> class ensures proper <code>PROTECT</code> wrapping for the lifetime of an object. A very important, yet easy-to-overlook, detail is that the form of assigning to a <code>SEXP</code> variable <em>looks</em> correct, but is in fact incorrect. For example in <code>SEXP ans = R::Protect(R::allocMatrixReal(nx, ny));</code>, the class will correctly construct around the result from <code>allocMatrix()</code>. But as it assigned to a <code>SEXP</code> variable, the compiler realizes that it is a temporary object and after calling <code>operator SEXP()</code> the destructor is called—essentially immediately.</p>
 <p>So the correct use is to write <code>R::Protect ans(R::allocMatrixReal(nx, ny));</code> which turns this into an instance of the the <code>Protect</code> which will live to the end of the scope and only <code>UNRPROTECT</code> via the destructor at the end of the scope.</p>
 <p>The example file <code>snippets/protectExamples.cpp</code> illustrates this by using <a href="https://cran.r-project.org/package=RcppSpdlog">RcppSpdlog</a> to log invocation of the three relevant parts constructor, destructor and <code>operator SEXP()</code> for both the correct and incorrect form of the ’convolution()<code>example. When</code>sourceCpp()`-ed into an R session, and skipping the first example in the file, we may see the following result (with of course different timestamps).</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>R<span class="sc">&gt;</span> <span class="fu">convolveIncorrect</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>))</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418260</span>] starting convolveIncorrect</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418286</span>] entered ctor</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418288</span>] entered <span class="fu">SEXP</span>()</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418290</span>] entered dtor</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418291</span>] entered ctor</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418293</span>] entered <span class="fu">SEXP</span>()</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418295</span>] entered dtor</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418297</span>] entered ctor</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418298</span>] entered <span class="fu">SEXP</span>()</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418300</span>] entered dtor</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418302</span>] ending convolveIncorrect</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>]  <span class="dv">4</span> <span class="dv">13</span> <span class="dv">28</span> <span class="dv">27</span> <span class="dv">18</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>R<span class="sc">&gt;</span> <span class="fu">convolveCorrect</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>))</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418431</span>] starting convolveCorrect</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418434</span>] entered ctor</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418435</span>] entered ctor</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418436</span>] entered <span class="fu">SEXP</span>()</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418438</span>] entered <span class="fu">SEXP</span>()</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418439</span>] entered ctor</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418441</span>] entered <span class="fu">SEXP</span>()</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418442</span>] entered <span class="fu">SEXP</span>()</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418444</span>] entered <span class="fu">SEXP</span>()</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418445</span>] ending convolveCorrect</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418447</span>] entered <span class="fu">SEXP</span>()</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418449</span>] entered dtor</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418450</span>] entered dtor</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span><span class="sc">:</span><span class="dv">25</span><span class="sc">:</span><span class="fl">56.418452</span>] entered dtor</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span>]  <span class="dv">4</span> <span class="dv">13</span> <span class="dv">28</span> <span class="dv">27</span> <span class="dv">18</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>R<span class="op">&gt;</span><span class="st"> </span><span class="kw">convolveIncorrect</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418260</span>] starting convolveIncorrect</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418286</span>] entered ctor</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418288</span>] entered <span class="kw">SEXP</span>()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418290</span>] entered dtor</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418291</span>] entered ctor</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418293</span>] entered <span class="kw">SEXP</span>()</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418295</span>] entered dtor</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418297</span>] entered ctor</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418298</span>] entered <span class="kw">SEXP</span>()</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418300</span>] entered dtor</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418302</span>] ending convolveIncorrect</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true"></a>[<span class="dv">1</span>]  <span class="dv">4</span> <span class="dv">13</span> <span class="dv">28</span> <span class="dv">27</span> <span class="dv">18</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true"></a>R<span class="op">&gt;</span><span class="st"> </span><span class="kw">convolveCorrect</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>))</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418431</span>] starting convolveCorrect</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418434</span>] entered ctor</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418435</span>] entered ctor</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418436</span>] entered <span class="kw">SEXP</span>()</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418438</span>] entered <span class="kw">SEXP</span>()</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418439</span>] entered ctor</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418441</span>] entered <span class="kw">SEXP</span>()</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418442</span>] entered <span class="kw">SEXP</span>()</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418444</span>] entered <span class="kw">SEXP</span>()</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418445</span>] ending convolveCorrect</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418447</span>] entered <span class="kw">SEXP</span>()</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418449</span>] entered dtor</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418450</span>] entered dtor</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true"></a>[<span class="dv">11</span><span class="op">:</span><span class="dv">25</span><span class="op">:</span><span class="fl">56.418452</span>] entered dtor</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true"></a>[<span class="dv">1</span>]  <span class="dv">4</span> <span class="dv">13</span> <span class="dv">28</span> <span class="dv">27</span> <span class="dv">18</span></span></code></pre></div>
 <p>In the first example, we see that the triplet constructor/SEXP()/destructor is called twice when the two vectors are coerced, and then a third time when the result vector is allocated. This shows the incorrect behavior: destructors essentially immediately after constructors, leaving the object unprotected—which is not what was intended.</p>
 <p>The second example shows the correct behavior. Two constructor calls, then two <code>SEXP()</code> calls (when the length are determined), another constructor followed by three <code>SEXP()</code> calls from the three <code>numericPointer()</code> calls—as well as a final <code>SEXP()</code> call for the return result and three destructors at end. This is the intended behavior of protecting the three objects during their lifetime.</p>
-</section>
-<section id="discussion" class="level3">
-<h3>Discussion</h3>
+<h3 id="discussion">Discussion</h3>
 <p><code>tidyCpp</code> provides a cleaner layer on top of the C API for R (as well as a so-far still minimal C++ class layer). That has its advantages: we find it more readable. It conceivably has possible disadvantages. Those familiar with the C API for R may not need this, and may find it an unnecessary new dialect. Time will tell if new adoption and use may outway possible hesitation by other. In the meantime, the package “does no harm”, has no further dependencies and can be used, or dropped, at will</p>
-</section>
-<section id="summary" class="level3">
-<h3>Summary</h3>
+<h3 id="summary">Summary</h3>
 <p>The <code>tidyCpp</code> package provides a simplifying layer on top of the time-tested but somewhat crusty C API for R.</p>
-</section>
-</section>
-</article>
-</main>
 </body>
 </html>
